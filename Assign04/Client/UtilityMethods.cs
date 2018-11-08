@@ -1,6 +1,6 @@
 ﻿/* 
 *  FILE          : UtilityMethods.cs
-*  PROJECT       : PROG 2120 - Assignment 1
+*  PROJECT       : PROG 2120 - Assignment 4
 *  PROGRAMMER    : Bence Karner & Randy Lefebvre
 *  DESCRIPTION   : This file acts as a repository for helper methods that don't logically fit into 
 *                  any of the other modules. The file contains methods used primarily for user input 
@@ -33,12 +33,8 @@ namespace UtilityMethods
         }//...BuildClientOutboundString
 
 
-        /*
-        *  REFERENCES    :  The following method was heavily based on the examples provided by Microsoft in there
-        *                   char encoding documentation. For a full reference, please see
-        *                   Microsoft. (ND). Encoding.Convert Method (Encoding, Encoding, Byte[]). Retrieved September 10, 2018, 
-        *                   from https://msdn.microsoft.com/en-us/library/windows/apps/kdcak6ye(v=vs.105).aspx
-        */
+
+
         public static string GetClientInput()
         {
             //Get input from the user through the console window
@@ -74,13 +70,13 @@ namespace UtilityMethods
 
 
 
-        public static bool ValidateInputString(ref string clientStringToValidate)
+        public static bool ValidateInputString(string clientStringToValidate)
         {
             bool isStringValid = true;
 
 
-            //Ensure the clients string isnt above the 1024 char length limit
-            if (clientStringToValidate.Length > 1023) //Leave space for the new line char
+            //Ensure the clients string isnt above the 2000 char length limit
+            if (clientStringToValidate.Length > 2000) //Leave space for the new line char
             {
                 isStringValid = false;
                 clientStringToValidate = string.Empty;
