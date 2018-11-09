@@ -32,7 +32,7 @@ namespace NetworkManager
         */
         public NamedPipeClientStream ConnectToPipe()
         {
-            NamedPipeClientStream establishedClientPipe = new NamedPipeClientStream("DEBUG_INSERT_PIPE_NAME");
+            NamedPipeClientStream establishedClientPipe = new NamedPipeClientStream("testpipe");
             establishedClientPipe.Connect();
             return establishedClientPipe;
         }
