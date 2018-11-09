@@ -23,17 +23,52 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
+using Microsoft.Win32;
 using System.Threading;
 using FileManager;
 
 
+
+//===========================================================================
+//TODO:
+
+/*
+ * ADD EVENT FOR SEND BUTTON
+ * ADD EVENT FOR CLEAR TEXT BUTTON
+ * ADD EVENT FOR EXPORT MESSAGE OPTION (half done, save option is enabled but not functional)
+ * FIX ALL COMMENT BLOCKS AND HEADERS 
+ * 
+ */
+//===========================================================================
+
+
 namespace Client
 {
-    public partial class MainWindow : Window
+
+    /* 
+    *   NAME    : MainWindow
+    *   PURPOSE : The purpose of this class is to instantiate the elements of the main window, and to handle events originating from it. 
+    *             Methods are provided for handeling events related to user interaction with the applications manin menu. This includes 
+    *             event handlers for saving chat logs, clearing/closing the application, and reacting to changes made in the textbox.
+    */
+public partial class MainWindow : Window
     {
+
+        private bool ChangesMade { get; set; }     //Auto property for checking if changes have been made to the document
+
+
+
+        /*  
+        *  METHOD        : MainWindow
+        *  DESCRIPTION   : This method is used to instantiate the elements of the window
+        *  PARAMETERS    : void : The method takes no arguments
+        *  RETURNS       : void : The method has no return value
+        */
         public MainWindow()
         {
             InitializeComponent();
+            ChangesMade = false;
 
             try
             {
@@ -56,6 +91,7 @@ namespace Client
             {
                 //DEBUG ADD THE LOGGING METHOD TO CAPTURE THE EVENT
                 //There is not enough memory available to start the thread.
+                throw new NotImplementedException();
             }
 
             //Open stream for capturing input from the user, and writing to the server
@@ -72,12 +108,153 @@ namespace Client
         }//...MainWindow
 
 
-        //DEBUG ADD EVENT FOR SEND BUTTON
-        //DEBUG ADD EVENT FOR CANCEL BUTTON
-        //DEBUG ADD EVENT FOR CLOSE APPLICATION BUTTON
-        //DEBUG ADD EVENT FOR ABOUT BUTTON
-        //DEBUG ADD EVENT FOR EXPORT MESSAGE OPTION
 
+        /*  
+        *  METHOD        : MenuSaveClick
+        *  DESCRIPTION   : This method allows the user to save the contents of the RichTextBox area, into a txt file
+        *  PARAMETERS    : Parameters are as follows,
+        *   object menuUIEvent : The object from which the even was triggered
+        *   RoutedEventArgs eventTrigger : Identifier for the triggered event
+        *  RETURNS       : void : The method has no return value
+        *  
+        *  NOTE: Much of the methods functionality was provided by Microsoft in their Dialog Boxes Overview Example;
+        *        For more information, please see: Microsoft. (2017). Dialog Boxes Overview. Retrieved Octover 2, 2018, from
+        *           https://docs.microsoft.com/en-us/dotnet/api/microsoft.win32.openfiledialog?view=netframework-4.7.2
+        */
+        private void MenuSaveClick(object menuUIEvent, RoutedEventArgs eventTrigger)
+        {
+
+            try
+            {
+                SaveFileDialog saveFileWindow = new SaveFileDialog();
+
+
+                //Configure save file dialog box
+                saveFileWindow.Title = "Save Chat Log: Save";                   //Set the window title
+                saveFileWindow.FileName = "";                                   //Default file name
+                saveFileWindow.DefaultExt = ".txt";                             //Default file extension
+                saveFileWindow.Filter = "Text documents (.txt)|*.txt";          //Filter files by extension
+                saveFileWindow.InitialDirectory = @"%userprofile%\desktop";     //Set the initial open directory to the users dektop
+
+
+                //Display the file menu, and capture the users response if they select a file
+                Nullable<bool> fileSelected = saveFileWindow.ShowDialog();
+                if (fileSelected == true)
+                {
+
+                    //Check if the target filename exists; if true, save the path and open the file
+                    if (saveFileWindow.CheckPathExists == true)
+                    {
+
+                        //Get the filepath from the diolog box, and select all the text in the document
+                        string filepath = saveFileWindow.FileName;
+                        TextRange textRange = new TextRange(richTextBoxInput.Document.ContentStart, richTextBoxInput.Document.ContentEnd);
+                        string selectedText = textRange.Text;
+
+
+                        //Split the text into the string array, and write each line to the file
+                        FileIO fileManager = new FileIO();
+                        string[] fileContents = new string[] { };
+                        fileContents = selectedText.Split('\n');
+                        fileManager.WriteToFile(filepath, fileContents);
+                    }
+                }
+            }//...try
+
+
+            catch (Exception errorMessage)
+            {
+                //DEBUG ADD LOGGING METHOD
+                throw new NotImplementedException();
+            }
+
+        }//...MenuSaveClick
+
+
+
+        /*  
+        *  METHOD        : MenuAboutClick
+        *  DESCRIPTION   : This method  is used to print the about statement for the program
+        *  PARAMETERS    : Parameters are as follows,
+        *   object menuUIEvent : The object from which the event was triggered
+        *   RoutedEventArgs eventTrigger : Identifier for the triggered event
+        *  RETURNS       : void : The method has no return value
+        *  
+        *  References: The source code, and C# image found in the About window were retrieved from the following sources,
+        *  Bakalenyik, M. (ND). C#: Static vs Non-Static Classes and Static vs Instance Methods. Retrieved on Oct 5, 2018, from
+        *       https://hackernoon.com/c-static-vs-instance-classes-and-methods-50fe8987b231 
+        *  
+        *  Mika, N. (2018). WpfApp1 [source code]. Retrieved on Oct 5, 2018, from Conestoga College, Doon Campus, K Drive
+        */
+        private void MenuAboutClick(object menuUIEvent, RoutedEventArgs eventTrigger)
+        {
+            //Configure the about window and display it
+            About aboutMessageBox = new About();
+            aboutMessageBox.Owner = Application.Current.MainWindow;
+            aboutMessageBox.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            aboutMessageBox.ShowDialog();
+
+        }//...MenuAboutClick
+
+
+
+        /*  
+        *  METHOD        : MenuExitClick
+        *  DESCRIPTION   : This method is used to close the application when the user selects the Exit command from the File menu
+        *  PARAMETERS    : Parameters are as follows,
+        *   object menuUIEvent : The object from which the event was triggered
+        *   RoutedEventArgs eventTrigger : Identifier for the triggered event
+        *  RETURNS       : void : The method has no return value
+        */
+        private void MenuExitClick(object menuUIEvent, RoutedEventArgs eventTrigger)
+        {
+            Application.Current.Shutdown();    //Close the application
+
+        }//...MenuExitClick
+
+
+
+        /*  
+        *  METHOD        : windowExit
+        *  DESCRIPTION   : This method is used to check if the user wants to close the application, once the top right X button is pressed
+        *  PARAMETERS    : Parameters are as follows,
+        *   object menuUIEvent : The object from which the event was triggered
+        *   CancelEventArgs eventTrigger : Identifier for the triggered event
+        *  RETURNS       : void : The method has no return value
+        */
+        public void WindowExit(object menuUIEvent, CancelEventArgs eventTrigger)
+        {
+            try
+            {
+
+                //Check if changes were made to the document before confirming the user wants to exit
+                if (ChangesMade == true)
+                {
+                    MessageBoxResult exitConfirmation = MessageBox.Show("Do you want to discard changes and exit?", "Exit Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    if (exitConfirmation == MessageBoxResult.Yes)
+                    {
+                        //Exit confirmed, close the application
+                        RoutedEventArgs newEventTrigger = new RoutedEventArgs();
+                        MenuExitClick(menuUIEvent, newEventTrigger);
+                    }
+
+
+                    else
+                    {
+                        //The user indicated they don't want to close the application
+                        eventTrigger.Cancel = true;
+                    }
+                }
+            }
+
+
+            catch (Exception errorMessage)
+            {
+                //DEBUG ADD LOGGING METHOD
+                throw new NotImplementedException();
+            }
+
+        }//...WindowExit
 
     }//...class
 }//...namespace

@@ -8,6 +8,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 
 
 namespace FileManager
@@ -47,17 +48,20 @@ namespace FileManager
             //In regards to the warning above, catch any exceptions thrown due to the masterFilePath variable being empty, or incorrect
             catch (ArgumentNullException nullException)
             {
+                //DEBUG ADD ERROR LOG
                 throw new NotImplementedException();
             }
 
             catch (DirectoryNotFoundException missingDirectory)
             {
+                //DEBUG ADD ERROR LOG
                 throw new NotImplementedException();
             }
 
             //Generic catch block for all remaining exceptions
             catch (Exception errorMessage)
             {
+                //DEBUG ADD ERROR LOG
                 throw new NotImplementedException();
             }
         }//... CreateFile
@@ -90,9 +94,51 @@ namespace FileManager
             //Generic catch block for all remaining exceptions
             catch (Exception errorMessage)
             {
+                //DEBUG ADD ERROR LOG
                 throw new NotImplementedException();
             }
         }//... AppendToFile
+
+
+        /*  
+        *  METHOD        : WriteToFile
+        *  DESCRIPTION   : This method is used to write each string in the array, to a file specified by the filepath parameter
+        *  PARAMETERS    : The parameters are as follows,
+        *  string filepath : String for the filepath where the data will be written
+        *  string[] fileContents : String array containing the contents of the application to be written to a file
+        *  RETURNS       : void : The method has no return
+        *  
+        */
+        public void WriteToFile(string filepath, string[] fileContents)
+        {
+
+            try
+            {
+                CreateFile(filepath);
+
+
+                //Flush the filestream and clear the contents of the file
+                FileStream fileStream = File.Open(filepath, FileMode.Open);
+                fileStream.SetLength(0);
+                fileStream.Close();
+
+
+                //Write each line from the string array, into the target file; the file is 
+                //  closed automatically once all write operations are complete
+                foreach (var line in fileContents)
+                {
+                    File.WriteAllLines(filepath, fileContents, Encoding.ASCII);
+                }
+            }
+
+
+            //Generic catch block for all exceptions
+            catch (Exception errorMessage)
+            {
+                //DEBUG ADD ERROR LOG
+                throw new NotImplementedException();
+            }
+        }//...WriteToFile
 
     }//...class
 }//...namespace
