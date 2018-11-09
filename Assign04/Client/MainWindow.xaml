@@ -5,8 +5,8 @@
     DESCRIPTION   : This file contains all the XAML source code required for structuring the main window of the application.
                     It defines the applications GUI, and links the UI elements to specific events.
 -->
-    
-    <Window x:Class="Client.MainWindow"
+
+<Window x:Class="Client.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -27,7 +27,7 @@
             <MenuItem Header="File" Height="auto" Width="40">
 
                 <!-- Option for saving the contents of the the text area -->
-                <MenuItem Header="Save As" Command="ApplicationCommands.Save">
+                <MenuItem Header="Export Chat Log" Command="ApplicationCommands.Save">
                     <MenuItem.Icon>
                         <Image Source="assets/saveFileIcon.png"/>
                     </MenuItem.Icon>
@@ -53,8 +53,13 @@
             </MenuItem>
         </Menu>
 
+        
+        <!-- DEBUG ADD DESC-->
+        <TextBox DockPanel.Dock="Bottom" Height="40" TextWrapping="Wrap" Text="" TextChanged="UpdateCharacterCount"/>
+
+
         <!-- Define the primary input/text area -->
-        <RichTextBox SpellCheck.IsEnabled="True" Name="richTextBoxInput" TextChanged="UpdateCharacterCount" VerticalScrollBarVisibility="Visible">
+        <RichTextBox SpellCheck.IsEnabled="True" Name="richTextBoxInput" VerticalScrollBarVisibility="Visible" Margin="0,0,0,55">
             <RichTextBox.Resources>
                 <Style TargetType="{x:Type Paragraph}" >
                     <Setter Property="Margin" Value="0"/>
@@ -63,5 +68,6 @@
             <FlowDocument TextAlignment="Left">
             </FlowDocument>
         </RichTextBox>
+
     </DockPanel>
 </Window>

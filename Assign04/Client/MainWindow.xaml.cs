@@ -34,11 +34,14 @@ using FileManager;
 //TODO:
 
 /*
- * ADD EVENT FOR SEND BUTTON
- * ADD EVENT FOR CLEAR TEXT BUTTON
+ * ADD EVENT FOR SEND BUTTON? (trigger send command by ENTER or send button)
+ * CHANGE THE INPUT AREA FROM RTB TO A TEXT BOX
+ * ADD STATUS BAR FOR INPUT CHAR COUNT
+ *      ADD EVENT CODE FOR CHAR COUNT
+ * REARRANGE CLIENT APPLICATION TO LOOK PROPER
  * ADD EVENT FOR EXPORT MESSAGE OPTION (half done, save option is enabled but not functional)
+ * FIX ABOUT WINDOW TO HAVE THE PROPER TEXT
  * FIX ALL COMMENT BLOCKS AND HEADERS 
- * 
  */
 //===========================================================================
 
@@ -256,5 +259,14 @@ public partial class MainWindow : Window
 
         }//...WindowExit
 
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void UpdateCharacterCount(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }//...class
 }//...namespace
