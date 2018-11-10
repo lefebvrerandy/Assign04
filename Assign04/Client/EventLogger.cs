@@ -26,7 +26,7 @@ namespace EventLogger
         *  PARAMETERS    : 
         *  RETURNS       : 
         */
-        public void LogApplicationEvents(string filepath, string messageToLog)
+        public static void LogApplicationEvents(string filepath, string messageToLog)
         {
 
             var currentTime = DateTime.Now;

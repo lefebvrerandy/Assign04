@@ -1,7 +1,7 @@
 ﻿/* 
 *  FILE          : About.xaml.cs
-*  PROJECT       : PROG 2120 - Assignment 2
-*  PROGRAMMER    : Bence Karner
+*  PROJECT       : PROG 2120 - Assignment 4
+*  PROGRAMMER    : Bence Karner & Randy Lefebvre
 *  DESCRIPTION   : This file contains the About class, which is used to instantiate, and close the About window. The file is 
 *                  part of the same project as MainWindow.Xaml.cs, and behaves as a respository for the main windows
 *                  operation.
@@ -9,8 +9,6 @@
 
 
 using System.Windows;
-
-
 namespace Client
 {
 
@@ -37,9 +35,9 @@ namespace Client
 
             //Configure the window message and startup location 
             this.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-            aboutWindowProgramAuthor.Text = "Author: Bence Karner";
+            aboutWindowProgramAuthor.Text = "Author: Bence Karner & Randy Lefebvre";
             aboutWindowProgramVersion.Text = "Version: 1.0";
-            aboutWindowProgramDescription.Text = "Description: TextEdit# is a text editor written in C#. The application allows users to write, copy & paste, and format text with different font options. The user is also able to save and load .txt files. This application is provided as is, without warranty of any kind ";
+            aboutWindowProgramDescription.Text = "Description: The application allows users to send messages to one another. Additionally, the user is able to export all chat data received during the session, and save it to a text file. This application is provided as is, without warranty of any kind ";
 
         }//...About
 
@@ -52,7 +50,7 @@ namespace Client
         *   RoutedEventArgs eventTrigger : Identifier for the triggered event
         *  RETURNS       : void : The method has no return value
         */
-        private void aboutOKButtonClick(object mneuUIEvent, RoutedEventArgs eventTrigger)
+        private void AboutOKButtonClick(object mneuUIEvent, RoutedEventArgs eventTrigger)
         {
             this.Close();
 

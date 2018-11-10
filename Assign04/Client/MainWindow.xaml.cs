@@ -27,7 +27,7 @@ using System.ComponentModel;
 using Microsoft.Win32;
 using System.Threading;
 using FileManager;
-
+using EventLogger;
 
 
 //===========================================================================
@@ -48,54 +48,38 @@ using FileManager;
 
 namespace Client
 {
-
-    /* 
-    *   NAME    : MainWindow
-    *   PURPOSE : The purpose of this class is to instantiate the elements of the main window, and to handle events originating from it. 
-    *             Methods are provided for handeling events related to user interaction with the applications manin menu. This includes 
-    *             event handlers for saving chat logs, clearing/closing the application, and reacting to changes made in the textbox.
-    */
-public partial class MainWindow : Window
+    class Program
     {
-
-        private bool ChangesMade { get; set; }     //Auto property for checking if changes have been made to the document
-
-
-
-        /*  
-        *  METHOD        : MainWindow
-        *  DESCRIPTION   : This method is used to instantiate the elements of the window
-        *  PARAMETERS    : void : The method takes no arguments
-        *  RETURNS       : void : The method has no return value
-        */
-        public MainWindow()
+        static void Main(string[] args)
         {
-            InitializeComponent();
-            ChangesMade = false;
-
-            try
-            {
-                //Thread used for managing all incoming messages
-                Thread incomingMessageThread = new Thread();
-                incomingMessageThread.Start();
-
-                //Thread used for managing all outgoing messages
-                Thread outgoingMessageThread = new Thread();
-                outgoingMessageThread.Start();
-
-                //Thread used for signaling to the server that the client is still alive, and connected (DEBUG MAYBE REMOVE DEPENDING ON HOW RANDY STRUCTURES SERVER)
-                Thread clientStatusThread = new Thread();
-                clientStatusThread.Start();
-            }
+            MainWindow ApplicationWindow = new MainWindow();
+            Logger.LogApplicationEvents("DEBUG INSERT FILEPATH TO LOG FILE", "APPLICATION START");
 
 
 
-            catch (OutOfMemoryException exception)
-            {
-                //DEBUG ADD THE LOGGING METHOD TO CAPTURE THE EVENT
-                //There is not enough memory available to start the thread.
-                throw new NotImplementedException();
-            }
+            //try
+            //{
+            //    ////Thread used for managing all incoming messages
+            //    //Thread incomingMessageThread = new Thread();
+            //    //incomingMessageThread.Start();
+
+            //    ////Thread used for managing all outgoing messages
+            //    //Thread outgoingMessageThread = new Thread();
+            //    //outgoingMessageThread.Start();
+
+            //    ////Thread used for signaling to the server that the client is still alive, and connected (DEBUG MAYBE REMOVE DEPENDING ON HOW RANDY STRUCTURES SERVER)
+            //    //Thread clientStatusThread = new Thread();
+            //    //clientStatusThread.Start();
+            //}
+
+
+
+            //catch (OutOfMemoryException exception)
+            //{
+            //    //DEBUG ADD THE LOGGING METHOD TO CAPTURE THE EVENT
+            //    //There is not enough memory available to start the thread.
+            //    throw new NotImplementedException();
+            //}
 
             //Open stream for capturing input from the user, and writing to the server
             //StreamReader inputStream = new StreamReader(DEBUG INSERT SERVER PIPE NAME);
@@ -108,13 +92,39 @@ public partial class MainWindow : Window
             //    clientStatusThread.join();
             //}
 
+
+        }
+    }
+
+
+
+    /* 
+    *   NAME    : MainWindow
+    *   PURPOSE : The purpose of this class is to instantiate the elements of the main window, and to handle events originating from it. 
+    *             Methods are provided for handeling events related to user interaction with the applications manin menu. This includes 
+    *             event handlers for saving chat logs, clearing/closing the application, and reacting to changes made in the textbox.
+    */
+    public partial class MainWindow : Window
+    {
+        private bool ChangesMade { get; set; }     //Auto property for checking if changes have been made to the document
+
+        /*  
+        *  METHOD        : MainWindow
+        *  DESCRIPTION   : This method is used to instantiate the elements of the window
+        *  PARAMETERS    : void : The method takes no arguments
+        *  RETURNS       : void : The method has no return value
+        */
+        public MainWindow()
+        {
+            InitializeComponent();
+            ChangesMade = false;
         }//...MainWindow
 
 
 
         /*  
         *  METHOD        : MenuSaveClick
-        *  DESCRIPTION   : This method allows the user to save the contents of the RichTextBox area, into a txt file
+        *  DESCRIPTION   : This method allows the user to save the contents of the Incoming Textbox area, into a txt file
         *  PARAMETERS    : Parameters are as follows,
         *   object menuUIEvent : The object from which the even was triggered
         *   RoutedEventArgs eventTrigger : Identifier for the triggered event
@@ -151,8 +161,9 @@ public partial class MainWindow : Window
 
                         //Get the filepath from the diolog box, and select all the text in the document
                         string filepath = saveFileWindow.FileName;
-                        TextRange textRange = new TextRange(richTextBoxInput.Document.ContentStart, richTextBoxInput.Document.ContentEnd);
-                        string selectedText = textRange.Text;
+
+                        //DEBUG HOW TO SELECT ALL THE TEXT IN THE INPUT WINDOW?
+                        //string selectedText = InputTextBox.SelectAll();
 
 
                         //Split the text into the string array, and write each line to the file
@@ -233,7 +244,7 @@ public partial class MainWindow : Window
                 //Check if changes were made to the document before confirming the user wants to exit
                 if (ChangesMade == true)
                 {
-                    MessageBoxResult exitConfirmation = MessageBox.Show("Do you want to discard changes and exit?", "Exit Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    MessageBoxResult exitConfirmation = MessageBox.Show("Are you sure you wish to exit?", "Exit Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
                     if (exitConfirmation == MessageBoxResult.Yes)
                     {
                         //Exit confirmed, close the application
@@ -258,15 +269,16 @@ public partial class MainWindow : Window
             }
 
         }//...WindowExit
+        
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
 
         private void UpdateCharacterCount(object sender, TextChangedEventArgs e)
         {
-
+            if (InputTextBox != null)
+            {
+                InputTextBox.Text = InputTextBox.Text.Length.ToString();
+            }
         }
+    
     }//...class
 }//...namespace

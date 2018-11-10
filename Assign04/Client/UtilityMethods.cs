@@ -18,13 +18,16 @@ namespace UtilityMethods
 
     /* 
     *   NAME    : Utility
-    *   PURPOSE : Utility class designed to house helper methods that do not logically fit into the other classes 
+    *   PURPOSE : Utility class designed to house helper methods that do not logically fit into the other classes. Methods are included for processing incoming,
+    *             and outgoing messages, by performing validation checks, and ensuring a common encoding standard is enforced. Addditionally, methods are included
+    *             for enforcing rules related to userName and message character usage.
+    *   
     */
     class Utility
     {
 
         //Rebuild the clients message into a single string
-        //Format of the outboundString is clientID, commandID, message
+        //Format the outboundString as clientID, commandID, message
         public static string BuildOutboundString(string clientMessageComponents)
         {
             string completeOutboundMessage = null;

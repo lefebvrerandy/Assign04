@@ -10,7 +10,6 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:BKarner5307PROG2120Assignment2"
       mc:Ignorable="d" 
       Title="About" Height="380" Width="246" WindowStyle="ToolWindow" ResizeMode="NoResize" >
 
@@ -30,10 +29,10 @@
 
 
         <!-- Add the applications icon, button, and text boxs for displaying the appropriate text-->
-        <Image Grid.Column="0" Source="CsharpProgramImage.png" Height="116" VerticalAlignment="Center" Margin="60,0,60,1"  />
+        <Image Grid.Column="0" Source="assets/CsharpProgramImage.png" Height="116" VerticalAlignment="Center" Margin="60,0,60,1"  />
         <TextBlock  Grid.Column="0" Grid.Row="1"  Name="aboutWindowProgramAuthor" TextWrapping="Wrap" Text="" Margin="10,0" />
         <TextBlock  Grid.Column="0" Grid.Row="2"  Name="aboutWindowProgramVersion" TextWrapping="Wrap" Text="" Margin="10,0" />
         <TextBlock  Grid.Column="0" Grid.Row="2"  Name="aboutWindowProgramDescription" TextWrapping="Wrap" Text="" Margin="10,17,10,4" Grid.RowSpan="2" />
-        <Button  Grid.Column="0" Grid.Row="4" Width="40" Click="aboutOKButtonClick" Content="OK" Margin="100,12,100,4"/>
+        <Button  Grid.Column="0" Grid.Row="4" Width="40" Click="AboutOKButtonClick" Content="OK" Margin="100,12,100,4"/>
     </Grid>
 </Window>

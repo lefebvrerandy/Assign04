@@ -11,10 +11,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Client"
         mc:Ignorable="d"
         Closing="WindowExit"
-        Title="Client Chat Application" Height="450" Width="900" Topmost="True">
+        Title="Client Chat Application" Height="600" Width="900" Topmost="True">
 
     <!-- Commands for executing menu options found in the File tab -->
     <Window.CommandBindings>
@@ -22,17 +21,17 @@
     </Window.CommandBindings>
 
     <!-- Create the menu toolbar, with headings for a File, Options, and About menu -->
-    <DockPanel LastChildFill="True">
-        <Menu DockPanel.Dock="Top" Height="20" Margin="0,0,0,0" >
+    <StackPanel>
+        <Menu Height="20" Margin="0,0,0,0" >
             <MenuItem Header="File" Height="auto" Width="40">
 
                 <!-- Option for saving the contents of the the text area -->
-                <MenuItem Header="Export Chat Log" Command="ApplicationCommands.Save">
+                <MenuItem Header="Export Log" Command="ApplicationCommands.Save">
                     <MenuItem.Icon>
                         <Image Source="assets/saveFileIcon.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                <Separator />
+                <Separator/>
 
 
                 <!-- Option for exiting the application -->
@@ -42,6 +41,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+
 
             <!-- Option for displaying the program information in an about box -->
             <MenuItem Header="Help" Height="auto" Width="40"  Margin="15,2,0,0">
@@ -54,20 +54,25 @@
         </Menu>
 
         
-        <!-- DEBUG ADD DESC-->
-        <TextBox DockPanel.Dock="Bottom" Height="40" TextWrapping="Wrap" Text="" TextChanged="UpdateCharacterCount"/>
+        <!-- Define the primary input/text areas -->
+        <TextBox Margin="1" FontSize="12" Height="15" TextAlignment="Left">Incoming Messages:</TextBox>
+        <TextBox Height="368" TextWrapping="Wrap"  IsReadOnly="True" Text=""/>
+        <Separator/>
+        
+        <TextBox Margin="0,30,0,0" FontSize="12" Height="16">Outgoing Messages:</TextBox>
+        <TextBox Name ="InputTextBox" Height="50" TextWrapping="Wrap" TextAlignment="Left" 
+                 TextChanged="UpdateCharacterCount" AcceptsReturn="True" SpellCheck.IsEnabled="True" Text=""/>
 
+        
+        <!-- Give the user the option to clear the input area of text quickly -->
+        <Button Margin="10" Width="50">Clear</Button>
+        <Separator/>
 
-        <!-- Define the primary input/text area -->
-        <RichTextBox SpellCheck.IsEnabled="True" Name="richTextBoxInput" VerticalScrollBarVisibility="Visible" Margin="0,0,0,55">
-            <RichTextBox.Resources>
-                <Style TargetType="{x:Type Paragraph}" >
-                    <Setter Property="Margin" Value="0"/>
-                </Style>
-            </RichTextBox.Resources>
-            <FlowDocument TextAlignment="Left">
-            </FlowDocument>
-        </RichTextBox>
-
-    </DockPanel>
+        
+        <!-- Display the character count in the lower status bar -->
+        <StatusBar Height="20" >
+            <TextBlock Text="Char Count: " Height="auto" Width="70" FontWeight="Bold" />
+            <TextBlock Name="charCountOutput" Width="Auto" />
+        </StatusBar>
+    </StackPanel>
 </Window>
