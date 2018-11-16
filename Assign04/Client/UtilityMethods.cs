@@ -9,10 +9,7 @@
 
 
 using System;
-using System.Text;
-
-
-namespace UtilityMethods
+namespace Client
 {
 
 
