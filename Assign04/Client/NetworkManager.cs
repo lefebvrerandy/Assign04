@@ -32,10 +32,11 @@ namespace NetworkManager
         */
         public NamedPipeClientStream ConnectToPipe()
         {
-            NamedPipeClientStream establishedClientPipe = new NamedPipeClientStream("testpipe");
+            NamedPipeClientStream establishedClientPipe = new NamedPipeClientStream("testpipe");    //DEBUG CHANGE THIS TO BE IN AN XML FILE? OR MAYBE MAKE CONSTANT?
             establishedClientPipe.Connect();
             return establishedClientPipe;
         }
+
 
 
         /*  

@@ -10,8 +10,6 @@
 
 using System;
 using System.Text;
-
-
 namespace UtilityMethods
 {
 
@@ -23,82 +21,128 @@ namespace UtilityMethods
     *             for enforcing rules related to userName and message character usage.
     *   
     */
-    class Utility
+    public class Utility
     {
 
-        //Rebuild the clients message into a single string
-        //Format the outboundString as clientID, commandID, message
-        public static string BuildOutboundString(string clientMessageComponents)
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        public static string BuildOutboundString(string userName, string command, string outboundMessage)
         {
             string completeOutboundMessage = null;
+            completeOutboundMessage += userName + ',' + command + ',' + outboundMessage;
             return completeOutboundMessage;
 
         }//...BuildClientOutboundString
 
 
-
-
-        public static string GetClientInput()
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        public static string BuildDisplayString(string messageFromServer)
         {
-            //Get input from the user through the console window
-            string newString = string.Empty;
-            newString = Console.ReadLine();
+            string completeOutboundMessage = null;
 
-            try
-            {
-                ////Create two different encodings.
-                //Encoding unicode = Encoding.Unicode;
-                //Encoding ascii = Encoding.ASCII;
+            //
+            string timeStamp = DateTime.Now.ToString("dd: hh: mm > ");
+            completeOutboundMessage += timeStamp + messageFromServer;
+            return completeOutboundMessage;
 
-
-                ////Convert the unicode string, UT16 encoded input, into a byte[]
-                //byte[] unicodeBytes = unicode.GetBytes(newString);
+        }//...BuildClientOutboundString
 
 
-                ////Perform the conversion from UT16 to ASCII
-                //byte[] asciiBytes = Encoding.Convert(unicode, ascii, unicodeBytes);
-                //newString = Encoding.ASCII.GetString(asciiBytes);
-            }
-
-
-            //If the source encoding or destination encoding parameters are null from Encoding.Convert(), then inform the user
-            catch (ArgumentNullException nullException)
-            {
-                throw new NotImplementedException();
-            }
-
-            return newString;
-        }//...GetClientInput
-
-
-
-
-        public static bool ValidateInputString(string clientStringToValidate)
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        public bool ValidateOutboundString(string newStringToValidate)
         {
-            bool isStringValid = true;
+            bool isStringValid = false;
 
 
-            //Ensure the clients string isnt above the 2000 char length limit
-            if (clientStringToValidate.Length > 2000) //Leave space for the new line char
+            //Ensure the string has an acceptable length, and uses valid chars
+            if (CheckOutboundStringLength(newStringToValidate) == true)
             {
-                isStringValid = false;
-                clientStringToValidate = string.Empty;
+                if (CheckCharactersInString(newStringToValidate) == true)
+                {
+                    isStringValid = true;
+                }
             }
 
+            return isStringValid;
+        }//...ValidateInputString
 
-            if (clientStringToValidate.Length < 1) //Min input length is 1 char
+
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        public bool CheckOutboundStringLength(string stringToCheck)
+        {
+            bool isStringValid = false;
+
+
+            //Max length of the users message is 2000 characters; reject the message if the string is too long or short
+            if ((stringToCheck.Length < 2001) && (stringToCheck.Length > 0))
             {
-                isStringValid = false;
-                clientStringToValidate = string.Empty;
+                isStringValid = true;
             }
 
+            return isStringValid;
+        }//...CheckOutboundStringLength
 
-            //The clients input string has been converted to ASCII from unicode, so check for any non-english chars
-            //  ASCII values below 32, and above 127 are considered invalid
+
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        public bool CheckUserNameLength(string stringToCheck)
+        {
+            bool isStringValid = false;
+
+
+            //Reject the users name if it's greater than the max of 16 chars or less than 1
+            if ((stringToCheck.Length < 17) && (stringToCheck.Length > 0))
+            {
+                isStringValid = true;
+            }
+
+            return isStringValid;
+        }//...CheckUserNameLength
+
+
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        public bool CheckCharactersInString (string stringToCheck)
+        {
+            bool isStringValid = false;
+
+
+            //Check each character in the string and count the number of errors, if count > 0, then the user must renter the string
+            //  with valid characters
             int invalidCharCount = 0;
-            foreach (char c in clientStringToValidate)
+            foreach (char c in stringToCheck)
             {
-                if ((int)c > 127)
+                if ((int)c > 126)
                 {
                     invalidCharCount++;
                 }
@@ -109,13 +153,56 @@ namespace UtilityMethods
                 }
             }
 
+
             if (invalidCharCount > 0)
             {
                 isStringValid = false;
             }
 
             return isStringValid;
-        }//...ValidateInputString
+        }//...CheckCharactersInString
+
+
+
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        public string ASCIIEncodeMessage(string outboundString)
+        {
+            //Get input from the user through the console window
+            string stringToEncode = string.Empty;
+            stringToEncode = outboundString;
+
+            try
+            {
+                //Create two different encodings.
+                Encoding unicode = Encoding.Unicode;
+                Encoding ascii = Encoding.ASCII;
+
+
+                //Convert the unicode string, UT16 encoded input, into a byte[]
+                byte[] unicodeBytes = unicode.GetBytes(stringToEncode);
+
+
+                //Perform the conversion from UT16 to ASCII
+                byte[] asciiBytes = Encoding.Convert(unicode, ascii, unicodeBytes);
+                stringToEncode = Encoding.ASCII.GetString(asciiBytes);
+            }
+
+
+            //If the source encoding or destination encoding parameters are null from Encoding.Convert(), then inform the user
+            catch (ArgumentNullException nullException)
+            {
+                throw new NotImplementedException();
+            }
+
+            return stringToEncode;
+
+        }//...GetClientInput
 
     }//...class Utility
 }//...namespace

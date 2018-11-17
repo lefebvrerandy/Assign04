@@ -269,16 +269,36 @@ namespace Client
             }
 
         }//...WindowExit
-        
 
 
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
         private void UpdateCharacterCount(object sender, TextChangedEventArgs e)
         {
             if (InputTextBox != null)
             {
-                InputTextBox.Text = InputTextBox.Text.Length.ToString();
+
+                //DEBUG ADD A CHECK TO SEE IF THE ENTER KEY WAS PRESSED, OR IF A \n WAS JUST ENTERED
+
+                int charCount = InputTextBox.Text.Length;
+                if (charCount > 2000)
+                {
+                    //DEBUG SET THE FONT COLOUR TO RED INDICATIG THE USER HAS ENTERED TOO MANY CHARS
+                    InputTextBox.Text = charCount.ToString();
+                }
+
+                else
+                {
+                    //DEBUG SET THE FONT COLOUR TO BLACK
+                    InputTextBox.Text = charCount.ToString();
+                }
             }
-        }
-    
+        }//...UpdateCharacterCount
+
     }//...class
 }//...namespace
