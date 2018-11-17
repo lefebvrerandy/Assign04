@@ -2,21 +2,26 @@
 *  FILE          : FileManager.cs
 *  PROJECT       : PROG 2120 - Assignment 4
 *  PROGRAMMER    : Bence Karner & Randy Lefebvre
-*  DESCRIPTION   : This file contains the DEBUG
+*  DESCRIPTION   : This file contains the FileIO class, and is used for opening, writing, creating
+*                   and appending to external files. 
+*                  
+*  NOTE: As the author (Bence Karner) of the class, and method, I have chosen to share the source code with my team
+*        for the INFO-2180 project managment project. Just as well, this exact class and method was used
+*        in a prior PROG-2110 assignment. 
 */
 
 
 using System;
 using System.IO;
 using System.Text;
-
-
-namespace FileManager
+namespace Client
 {
 
     /* 
-    *   NAME    : 
-    *   PURPOSE :
+    *   NAME    : FileIO
+    *   PURPOSE : The purpose of this class is to allow the application to interact with files and information external to the program.
+    *             The class functions much like a generic file IO module, in that it allows the importation and exporation of data 
+    *             to sources outsie the program. Methods are included for creating, reading, writing, and appending to files. 
     */
     class FileIO
     {
@@ -48,21 +53,18 @@ namespace FileManager
             //In regards to the warning above, catch any exceptions thrown due to the masterFilePath variable being empty, or incorrect
             catch (ArgumentNullException nullException)
             {
-                //DEBUG ADD ERROR LOG
-                throw new NotImplementedException();
+                UIController.PrintErrorToMessageBox("NullException: ", nullException.ToString());
             }
 
             catch (DirectoryNotFoundException missingDirectory)
             {
-                //DEBUG ADD ERROR LOG
-                throw new NotImplementedException();
+                UIController.PrintErrorToMessageBox("MissingDirectory: ", missingDirectory.ToString());
             }
 
             //Generic catch block for all remaining exceptions
             catch (Exception errorMessage)
             {
-                //DEBUG ADD ERROR LOG
-                throw new NotImplementedException();
+                UIController.PrintErrorToMessageBox("GenericError: ", errorMessage.ToString());
             }
         }//... CreateFile
 
@@ -94,8 +96,7 @@ namespace FileManager
             //Generic catch block for all remaining exceptions
             catch (Exception errorMessage)
             {
-                //DEBUG ADD ERROR LOG
-                throw new NotImplementedException();
+                UIController.PrintErrorToMessageBox("GenericError: ", errorMessage.ToString());
             }
         }//... AppendToFile
 
@@ -135,10 +136,8 @@ namespace FileManager
             //Generic catch block for all exceptions
             catch (Exception errorMessage)
             {
-                //DEBUG ADD ERROR LOG
-                throw new NotImplementedException();
+                UIController.PrintErrorToMessageBox("GenericError: ", errorMessage.ToString());
             }
         }//...WriteToFile
-
     }//...class
 }//...namespace

@@ -27,7 +27,7 @@ using System.ComponentModel;
 using Microsoft.Win32;
 using System.Threading;
 using FileManager;
-using EventLogger;
+using Client;
 
 
 //===========================================================================
