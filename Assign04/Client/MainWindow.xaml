@@ -56,12 +56,12 @@
         
         <!-- Define the primary input/text areas -->
         <TextBox Margin="1" FontSize="12" Height="15" TextAlignment="Left">Incoming Messages:</TextBox>
-        <TextBox Height="368" TextWrapping="Wrap"  IsReadOnly="True" Text=""/>
+        <TextBox Name="OutputTextBox" Height="368" TextWrapping="Wrap"  IsReadOnly="True" Text=""/>
         <Separator/>
         
         <TextBox Margin="0,30,0,0" FontSize="12" Height="16">Outgoing Messages:</TextBox>
         <TextBox Name ="InputTextBox" Height="50" TextWrapping="Wrap" TextAlignment="Left" 
-                 TextChanged="UpdateCharacterCount" AcceptsReturn="True" SpellCheck.IsEnabled="True" Text=""/>
+                 TextChanged="TextScanner" AcceptsReturn="True" SpellCheck.IsEnabled="True" Text=""/>
 
         
         <!-- Give the user the option to clear the input area of text quickly -->

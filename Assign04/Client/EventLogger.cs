@@ -5,7 +5,7 @@
 *  DESCRIPTION   : This file contains the Logger class, and is used for recording data related to 
 *                  errors, or application events to a log file. 
 *                  
-*  NOTE: As the author (Bence Karner) of the class, and method, I have chosen to share the source code with my team
+*  NOTE: As the author (Bence Karner) of the class, and methods, I have chosen to share the source code with my team
 *        for the INFO-2180 project managment project. Just as well, this exact class and method was used
 *        in a prior PROG-2110 assignment.
 */
@@ -45,7 +45,7 @@ namespace Client
             eventString += timeStamp + messageToLog;
             File.AppendAllText(filepath, eventString + Environment.NewLine);
 
-        }//... LogApplicationEvents
+        }// LogApplicationEvents
 
-    }//...class
-}//...namepspace
+    }//class
+}//namepspace

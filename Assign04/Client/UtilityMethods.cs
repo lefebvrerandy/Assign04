@@ -10,7 +10,7 @@
 
 using System;
 using System.Text;
-namespace UtilityMethods
+namespace Client
 {
 
 
@@ -24,6 +24,22 @@ namespace UtilityMethods
     public class Utility
     {
 
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        public static string[] StringSplitter (string stringToSplit)
+        {
+
+            //Split the chat logs by the new line char
+            string[] returnStringArray = new string[] { };
+            returnStringArray = stringToSplit.Split('\n');
+            return returnStringArray;
+        }
+
         /*  
         *  METHOD        : 
         *  DESCRIPTION   : 
@@ -36,7 +52,7 @@ namespace UtilityMethods
             completeOutboundMessage += userName + ',' + command + ',' + outboundMessage;
             return completeOutboundMessage;
 
-        }//...BuildClientOutboundString
+        }//BuildClientOutboundString
 
 
         /*  
@@ -54,7 +70,7 @@ namespace UtilityMethods
             completeOutboundMessage += timeStamp + messageFromServer;
             return completeOutboundMessage;
 
-        }//...BuildClientOutboundString
+        }//BuildClientOutboundString
 
 
         /*  
@@ -78,7 +94,7 @@ namespace UtilityMethods
             }
 
             return isStringValid;
-        }//...ValidateInputString
+        }//ValidateInputString
 
 
 
@@ -100,7 +116,7 @@ namespace UtilityMethods
             }
 
             return isStringValid;
-        }//...CheckOutboundStringLength
+        }//CheckOutboundStringLength
 
 
 
@@ -122,7 +138,7 @@ namespace UtilityMethods
             }
 
             return isStringValid;
-        }//...CheckUserNameLength
+        }//CheckUserNameLength
 
 
 
@@ -160,7 +176,7 @@ namespace UtilityMethods
             }
 
             return isStringValid;
-        }//...CheckCharactersInString
+        }//CheckCharactersInString
 
 
 
@@ -202,7 +218,6 @@ namespace UtilityMethods
 
             return stringToEncode;
 
-        }//...GetClientInput
-
-    }//...class Utility
-}//...namespace
+        }//GetClientInput
+    }//class
+}//namespace

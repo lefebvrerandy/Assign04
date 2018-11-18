@@ -39,6 +39,6 @@ namespace Client
             MessageBoxImage icon = MessageBoxImage.Error;
             MessageBox.Show(messageToPrint, errorCategory, button, icon);
 
-        }//...PrintErrorToMessageBox
-    }//...class
-}//...namespace
+        }//PrintErrorToMessageBox
+    }//class
+}//namespace

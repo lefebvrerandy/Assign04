@@ -26,77 +26,10 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using Microsoft.Win32;
 using System.Threading;
-using FileManager;
-using Client;
-
-
-//===========================================================================
-//TODO:
-
-/*
- * ADD EVENT FOR SEND BUTTON? (trigger send command by ENTER or send button)
- * CHANGE THE INPUT AREA FROM RTB TO A TEXT BOX
- * ADD STATUS BAR FOR INPUT CHAR COUNT
- *      ADD EVENT CODE FOR CHAR COUNT
- * REARRANGE CLIENT APPLICATION TO LOOK PROPER
- * ADD EVENT FOR EXPORT MESSAGE OPTION (half done, save option is enabled but not functional)
- * FIX ABOUT WINDOW TO HAVE THE PROPER TEXT
- * FIX ALL COMMENT BLOCKS AND HEADERS 
- */
-//===========================================================================
-
-
+using System.IO;
+using System.IO.Pipes;
 namespace Client
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            MainWindow ApplicationWindow = new MainWindow();
-            Logger.LogApplicationEvents("DEBUG INSERT FILEPATH TO LOG FILE", "APPLICATION START");
-
-
-
-            //try
-            //{
-            //    ////Thread used for managing all incoming messages
-            //    //Thread incomingMessageThread = new Thread();
-            //    //incomingMessageThread.Start();
-
-            //    ////Thread used for managing all outgoing messages
-            //    //Thread outgoingMessageThread = new Thread();
-            //    //outgoingMessageThread.Start();
-
-            //    ////Thread used for signaling to the server that the client is still alive, and connected (DEBUG MAYBE REMOVE DEPENDING ON HOW RANDY STRUCTURES SERVER)
-            //    //Thread clientStatusThread = new Thread();
-            //    //clientStatusThread.Start();
-            //}
-
-
-
-            //catch (OutOfMemoryException exception)
-            //{
-            //    //DEBUG ADD THE LOGGING METHOD TO CAPTURE THE EVENT
-            //    //There is not enough memory available to start the thread.
-            //    throw new NotImplementedException();
-            //}
-
-            //Open stream for capturing input from the user, and writing to the server
-            //StreamReader inputStream = new StreamReader(DEBUG INSERT SERVER PIPE NAME);
-            //StreamWriter outputStream = new StreamWriter(client);
-
-            //finally
-            //{
-            //    incomingMessageThread.join();
-            //    outgoingMessageThread.join();
-            //    clientStatusThread.join();
-            //}
-
-
-        }
-    }
-
-
 
     /* 
     *   NAME    : MainWindow
@@ -106,7 +39,9 @@ namespace Client
     */
     public partial class MainWindow : Window
     {
+
         private bool ChangesMade { get; set; }     //Auto property for checking if changes have been made to the document
+
 
         /*  
         *  METHOD        : MainWindow
@@ -116,9 +51,66 @@ namespace Client
         */
         public MainWindow()
         {
+
             InitializeComponent();
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             ChangesMade = false;
-        }//...MainWindow
+
+
+            Thread incomingMessageManager = new Thread(ThreadedListener);
+            incomingMessageManager.Start();
+
+
+            Thread outgoingMessageManager = new Thread(ThreadedSender);
+            outgoingMessageManager.Start();
+        }//MainWindow
+
+
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        public void ThreadedListener()
+        {
+            ClientStreamPipe pipeManager = new ClientStreamPipe();
+            NamedPipeClientStream incomingMessagePipe = pipeManager.OpenIncomingPipe();
+            StreamReader inputStream = new StreamReader(incomingMessagePipe);
+
+
+
+
+        }
+
+
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        public void ThreadedSender()
+        {
+
+
+            //Open the necessary connections for writing to the server
+            ClientStreamPipe pipeManager = new ClientStreamPipe();
+            NamedPipeClientStream outgoingMessagePipe = pipeManager.OpenOutgoingPipe();
+            StreamWriter outputStream = new StreamWriter(outgoingMessagePipe);
+
+
+            //Format the outgoing message
+            //DEBUG CHECK THE USERS MESSAGE IF ITS ACTUALLY CONTAINING SOMETHING
+            //DEBUG run the string through the encoding method and return the byte array
+            //
+
+            //Write the users complete message to the pipe
+            outputStream.WriteLine(User.Message);
+            outputStream.Flush();
+        }
 
 
 
@@ -168,21 +160,22 @@ namespace Client
 
                         //Split the text into the string array, and write each line to the file
                         FileIO fileManager = new FileIO();
-                        string[] fileContents = new string[] { };
-                        fileContents = selectedText.Split('\n');
-                        fileManager.WriteToFile(filepath, fileContents);
+                        OutputTextBox.SelectAll();
+                        string textboxContents = OutputTextBox.SelectedText;
+                        string[] textArray = Utility.StringSplitter(textboxContents);
+                        fileManager.WriteToFile(filepath, textArray);
                     }
                 }
-            }//...try
+            }//try
 
 
             catch (Exception errorMessage)
             {
                 //DEBUG ADD LOGGING METHOD
-                throw new NotImplementedException();
+                Logger.LogApplicationEvents("DEBUG INSERT FILEPATH FROM XML", errorMessage.ToString());
             }
 
-        }//...MenuSaveClick
+        }//MenuSaveClick
 
 
 
@@ -208,7 +201,7 @@ namespace Client
             aboutMessageBox.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             aboutMessageBox.ShowDialog();
 
-        }//...MenuAboutClick
+        }//MenuAboutClick
 
 
 
@@ -224,7 +217,7 @@ namespace Client
         {
             Application.Current.Shutdown();    //Close the application
 
-        }//...MenuExitClick
+        }//MenuExitClick
 
 
 
@@ -268,7 +261,7 @@ namespace Client
                 throw new NotImplementedException();
             }
 
-        }//...WindowExit
+        }//WindowExit
 
 
 
@@ -278,27 +271,48 @@ namespace Client
         *  PARAMETERS    : 
         *  RETURNS       : 
         */
-        private void UpdateCharacterCount(object sender, TextChangedEventArgs e)
+        private void TextScanner(object sender, RoutedEventArgs e)
         {
-            if (InputTextBox != null)
+            if (InputTextBox.IsFocused == true)
             {
 
-                //DEBUG ADD A CHECK TO SEE IF THE ENTER KEY WAS PRESSED, OR IF A \n WAS JUST ENTERED
-
-                int charCount = InputTextBox.Text.Length;
-                if (charCount > 2000)
+                if (InputTextBox.Text.Length <= 2000)
                 {
-                    //DEBUG SET THE FONT COLOUR TO RED INDICATIG THE USER HAS ENTERED TOO MANY CHARS
-                    InputTextBox.Text = charCount.ToString();
+                    //Dump the contents of the textbox into a string and scan for the newline char (signals a send command)
+                    string textboxContents = InputTextBox.Text;
+                    if (textboxContents.IndexOf("\n") > -1)
+                    {
+
+                        //Save the message, and clear the textbox
+                        User.Message = textboxContents;
+                        InputTextBox.Text = "";
+                    }
                 }
 
-                else
-                {
-                    //DEBUG SET THE FONT COLOUR TO BLACK
-                    InputTextBox.Text = charCount.ToString();
-                }
+                UpdateCharCount(sender, e);
+            }//textbox is in focus
+        }//TextScanner
+
+
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        private void UpdateCharCount(object sender, RoutedEventArgs e)
+        {
+            int charCount = InputTextBox.Text.Length;
+            charCountOutput.Text = charCount.ToString();
+
+
+            if (charCount > 2000)
+            {
+                //DEBUG style the text to look red
+
             }
-        }//...UpdateCharacterCount
+        }
 
-    }//...class
-}//...namespace
+    }//class
+}//namespace

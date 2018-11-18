@@ -12,8 +12,6 @@ using System.Text;
 using System.Net;
 using System.IO;
 using System.IO.Pipes;
-
-
 namespace Client
 {
 
@@ -24,18 +22,19 @@ namespace Client
     public class ClientStreamPipe
     {
 
+
         /*  
-        *  METHOD        : NamedPipeClientStream
-        *  DESCRIPTION   : Used to connect to a new new named pipe, and return a reference to the connection
+        *  METHOD        : 
+        *  DESCRIPTION   : 
         *  PARAMETERS    : void : Takes no arguments
         *  RETURNS       : NamedPipeClientStream : A reference to the connected pipe that was just opened
         */
-        public NamedPipeClientStream ConnectToPipe()
+        public NamedPipeClientStream OpenOutgoingPipe()
         {
             NamedPipeClientStream establishedClientPipe = null;
             try
             {
-                establishedClientPipe = new NamedPipeClientStream(pipeName, );
+                establishedClientPipe = new NamedPipeClientStream(".", DEBUG, PipeDirection.Out);
                 establishedClientPipe.Connect();
             }
 
@@ -56,8 +55,43 @@ namespace Client
             }
             
             return establishedClientPipe;
+        }
 
-        }//...NamedPipeClientStream
+
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : void : Takes no arguments
+        *  RETURNS       : NamedPipeClientStream :
+        */
+        public NamedPipeClientStream OpenIncomingPipe()
+        {
+            NamedPipeClientStream establishedClientPipe = null;
+            try
+            {
+                establishedClientPipe = new NamedPipeClientStream(".", DEBUG, PipeDirection.In);
+                establishedClientPipe.Connect();
+            }
+
+            //Inform the user that they can't connect to the server using the pipe
+            catch (Exception errorMessage)
+            {
+                if ((errorMessage is ArgumentNullException) || (errorMessage is ArgumentException))
+                {
+                    UIController.PrintErrorToMessageBox("PipeError: ", "Unable to open " + pipeName.Tostring() + " pipe; check the pipe name, and ensure it's valid");
+                    Logger.LogApplicationEvents("DEBUG FIEPATH", "");
+                }
+
+                else
+                {
+                    UIController.PrintErrorToMessageBox("GenericError: ", errorMessage.ToString());
+                    Logger.LogApplicationEvents("DEBUG FIEPATH", errorMessage.ToString());
+                }
+            }
+
+            return establishedClientPipe;
+        }
 
 
         /*  
@@ -75,6 +109,6 @@ namespace Client
             return isExitConfirmed;
         }
 
-    }//...class
-}//...namespace
+    }//class
+}//namespace
 

@@ -42,6 +42,6 @@ namespace Client
 
             return nameValidity;
 
-        }//...IsUserNameValid
-    }//...class
-}//...namepsace
+        }//IsUserNameValid
+    }//class
+}//namepsace

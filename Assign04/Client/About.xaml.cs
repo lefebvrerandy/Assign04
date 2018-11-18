@@ -39,7 +39,7 @@ namespace Client
             aboutWindowProgramVersion.Text = "Version: 1.0";
             aboutWindowProgramDescription.Text = "Description: The application allows users to send messages to one another. Additionally, the user is able to export all chat data received during the session, and save it to a text file. This application is provided as is, without warranty of any kind ";
 
-        }//...About
+        }//About
 
 
         /*  
@@ -54,7 +54,7 @@ namespace Client
         {
             this.Close();
 
-        }//...aboutOKButtonClick
+        }//aboutOKButtonClick
 
-    }//...class
-}//...namespace
+    }//class
+}//namespace

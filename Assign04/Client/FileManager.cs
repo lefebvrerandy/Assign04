@@ -34,7 +34,7 @@ namespace Client
        *  PARAMETERS    : string filePath : The file path of the file to be created
        *  RETURNS       : void : The method has no return
        */
-        public static void CreateFile(string filePath)
+        public void CreateFile(string filePath)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace Client
             {
                 UIController.PrintErrorToMessageBox("GenericError: ", errorMessage.ToString());
             }
-        }//... CreateFile
+        }// CreateFile
 
 
 
@@ -98,7 +98,7 @@ namespace Client
             {
                 UIController.PrintErrorToMessageBox("GenericError: ", errorMessage.ToString());
             }
-        }//... AppendToFile
+        }// AppendToFile
 
 
         /*  
@@ -138,6 +138,6 @@ namespace Client
             {
                 UIController.PrintErrorToMessageBox("GenericError: ", errorMessage.ToString());
             }
-        }//...WriteToFile
-    }//...class
-}//...namespace
+        }//WriteToFile
+    }//class
+}//namespace
