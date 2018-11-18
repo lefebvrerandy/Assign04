@@ -35,8 +35,11 @@ namespace Server
             //  From there the method will spawn a new thread for each
             while (true)
             {
-                NamedPipeServerStream pipe_in = OpenInPipe(pipename);
-                NamedPipeServerStream pipe_out = OpenOutPipe(pipename);
+
+                ServerPipes serverPipe = new ServerPipes();
+
+                NamedPipeServerStream pipe_in = serverPipe.OpenInPipe(pipename);
+                NamedPipeServerStream pipe_out = serverPipe.OpenOutPipe(pipename);
 
 
                 // Start a new thread, Send the pipe_in pipe to the new thread
