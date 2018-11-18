@@ -46,7 +46,7 @@ namespace Client
         *  PARAMETERS    : 
         *  RETURNS       : 
         */
-        public static string BuildOutboundString(string userName, string command, string outboundMessage)
+        public string BuildOutboundString(string userName, string command, string outboundMessage)
         {
             string completeOutboundMessage = null;
             completeOutboundMessage += userName + ',' + command + ',' + outboundMessage;
@@ -61,7 +61,7 @@ namespace Client
         *  PARAMETERS    : 
         *  RETURNS       : 
         */
-        public static string BuildDisplayString(string messageFromServer)
+        public string BuildDisplayString(string messageFromServer)
         {
             string completeOutboundMessage = null;
 
@@ -71,52 +71,6 @@ namespace Client
             return completeOutboundMessage;
 
         }//BuildClientOutboundString
-
-
-        /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
-        */
-        public bool ValidateOutboundString(string newStringToValidate)
-        {
-            bool isStringValid = false;
-
-
-            //Ensure the string has an acceptable length, and uses valid chars
-            if (CheckOutboundStringLength(newStringToValidate) == true)
-            {
-                if (CheckCharactersInString(newStringToValidate) == true)
-                {
-                    isStringValid = true;
-                }
-            }
-
-            return isStringValid;
-        }//ValidateInputString
-
-
-
-        /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
-        */
-        public bool CheckOutboundStringLength(string stringToCheck)
-        {
-            bool isStringValid = false;
-
-
-            //Max length of the users message is 2000 characters; reject the message if the string is too long or short
-            if ((stringToCheck.Length < 2001) && (stringToCheck.Length > 0))
-            {
-                isStringValid = true;
-            }
-
-            return isStringValid;
-        }//CheckOutboundStringLength
 
 
 
@@ -190,8 +144,8 @@ namespace Client
         public string ASCIIEncodeMessage(string outboundString)
         {
             //Get input from the user through the console window
-            string stringToEncode = string.Empty;
-            stringToEncode = outboundString;
+            string encodedString = string.Empty;
+            encodedString = outboundString;
 
             try
             {
@@ -201,22 +155,31 @@ namespace Client
 
 
                 //Convert the unicode string, UT16 encoded input, into a byte[]
-                byte[] unicodeBytes = unicode.GetBytes(stringToEncode);
+                byte[] unicodeBytes = unicode.GetBytes(encodedString);
 
 
                 //Perform the conversion from UT16 to ASCII
                 byte[] asciiBytes = Encoding.Convert(unicode, ascii, unicodeBytes);
-                stringToEncode = Encoding.ASCII.GetString(asciiBytes);
+                encodedString = Encoding.ASCII.GetString(asciiBytes);
             }
 
 
-            //If the source encoding or destination encoding parameters are null from Encoding.Convert(), then inform the user
+            //Inform the user if the source encoding or destination encoding parameters are null from Encoding.Convert()
             catch (ArgumentNullException nullException)
             {
-                throw new NotImplementedException();
+
+                //Print the error to a message box
+                UIController.PrintErrorToMessageBox("nullException: ", "The source encoding or destination encoding parameters were null" + Environment.NewLine + 
+                    "Your message may not display properly in the chat window");
+
+
+                //Log the error
+                FileIO fileManager = new FileIO();
+                string filepath = fileManager.ReadXMLDocument("logFilePath");   //Indicator of the element to search in the XML doc
+                Logger.LogApplicationEvents(filepath, nullException.ToString());
             }
 
-            return stringToEncode;
+            return encodedString;
 
         }//GetClientInput
     }//class

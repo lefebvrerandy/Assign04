@@ -13,7 +13,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Closing="WindowExit"
-        Title="Client Chat Application" Height="600" Width="900" Topmost="True">
+        Title="Client Chat Application" Height="601" Width="900" Topmost="True">
 
     <!-- Commands for executing menu options found in the File tab -->
     <Window.CommandBindings>
@@ -53,24 +53,23 @@
             </MenuItem>
         </Menu>
 
-        
+
         <!-- Define the primary input/text areas -->
-        <TextBox Margin="1" FontSize="12" Height="15" TextAlignment="Left">Incoming Messages:</TextBox>
+        <TextBox Margin="1" FontSize="12" Height="19" TextAlignment="Left">Incoming Messages:</TextBox>
         <TextBox Name="OutputTextBox" Height="368" TextWrapping="Wrap"  IsReadOnly="True" Text=""/>
         <Separator/>
-        
-        <TextBox Margin="0,30,0,0" FontSize="12" Height="16">Outgoing Messages:</TextBox>
+        <Label Name="userNameLabel" Content="UserName: " Height="25"/>
+        <TextBox Margin="0,0,0,0" FontSize="12" Height="20" Text="Outgoing Messages:"/>
         <TextBox Name ="InputTextBox" Height="50" TextWrapping="Wrap" TextAlignment="Left" 
                  TextChanged="TextScanner" AcceptsReturn="True" SpellCheck.IsEnabled="True" Text=""/>
 
-        
+
         <!-- Give the user the option to clear the input area of text quickly -->
         <Button Margin="10" Width="50">Clear</Button>
-        <Separator/>
 
-        
+
         <!-- Display the character count in the lower status bar -->
-        <StatusBar Height="20" >
+        <StatusBar Height="19" >
             <TextBlock Text="Char Count: " Height="auto" Width="70" FontWeight="Bold" />
             <TextBlock Name="charCountOutput" Width="Auto" />
         </StatusBar>

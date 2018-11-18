@@ -14,6 +14,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Xml;
 namespace Client
 {
 
@@ -53,18 +54,18 @@ namespace Client
             //In regards to the warning above, catch any exceptions thrown due to the masterFilePath variable being empty, or incorrect
             catch (ArgumentNullException nullException)
             {
-                UIController.PrintErrorToMessageBox("NullException: ", nullException.ToString());
+                UIController.PrintErrorToMessageBox("CreateFile NullException: ", nullException.ToString());
             }
 
             catch (DirectoryNotFoundException missingDirectory)
             {
-                UIController.PrintErrorToMessageBox("MissingDirectory: ", missingDirectory.ToString());
+                UIController.PrintErrorToMessageBox("CreateFile MissingDirectory: ", missingDirectory.ToString());
             }
 
             //Generic catch block for all remaining exceptions
             catch (Exception errorMessage)
             {
-                UIController.PrintErrorToMessageBox("GenericError: ", errorMessage.ToString());
+                UIController.PrintErrorToMessageBox("CreateFile GenericError: ", errorMessage.ToString());
             }
         }// CreateFile
 
@@ -96,7 +97,7 @@ namespace Client
             //Generic catch block for all remaining exceptions
             catch (Exception errorMessage)
             {
-                UIController.PrintErrorToMessageBox("GenericError: ", errorMessage.ToString());
+                UIController.PrintErrorToMessageBox("AppendToFile Error: ", errorMessage.ToString());
             }
         }// AppendToFile
 
@@ -136,8 +137,57 @@ namespace Client
             //Generic catch block for all exceptions
             catch (Exception errorMessage)
             {
-                UIController.PrintErrorToMessageBox("GenericError: ", errorMessage.ToString());
+                UIController.PrintErrorToMessageBox("WriteToFile Error: ", errorMessage.ToString());
             }
         }//WriteToFile
+
+
+
+
+        public string ReadXMLDocument(string elementToLocate)
+        {
+            string  stringFromDocument = string.Empty;
+            var constantsDocument = new XmlDataDocument();
+
+            try
+            {
+                constantsDocument.LoadXml("constnats.xml");
+
+
+                //Look for the pipe name element
+                if (elementToLocate == "pipeName-incoming")
+                {
+                    constantsDocument.SelectNodes("/root/constants/networking/pipename/incoming");
+                }
+
+
+                else if (elementToLocate == "pipeName-outgoing")
+                {
+                    constantsDocument.SelectNodes("/root/constants/networking/pipename/outgoing");
+                }
+
+                //Look for the log file path
+                else if (elementToLocate == "logFilePath")
+                {
+                    constantsDocument.SelectNodes("/root/constants/filePaths/logFile");
+                }
+
+                //Incorrect element name was given
+                else
+                {
+                    throw new Exception();
+                }
+            }
+
+
+            //XML file could not be located, or the element name was incorrect
+            catch (Exception errorMessage)
+            {
+                UIController.PrintErrorToMessageBox("ReadXMLDocument Error: ", errorMessage.ToString());
+            }
+
+            return stringFromDocument;
+        }//ReadXMLDocument
+
     }//class
 }//namespace

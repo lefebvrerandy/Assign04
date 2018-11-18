@@ -63,6 +63,9 @@ namespace Client
 
             Thread outgoingMessageManager = new Thread(ThreadedSender);
             outgoingMessageManager.Start();
+
+
+            userNameLabel.Content = User.ClientID;
         }//MainWindow
 
 
@@ -75,13 +78,26 @@ namespace Client
         */
         public void ThreadedListener()
         {
+
+            //Open the necessary connections for reading from the server
             ClientStreamPipe pipeManager = new ClientStreamPipe();
-            NamedPipeClientStream incomingMessagePipe = pipeManager.OpenIncomingPipe();
+
+            FileIO fileManager = new FileIO();
+            string pipeName = fileManager.ReadXMLDocument("pipeName-incoming");      //string indicator of the element to search in the XML doc
+            NamedPipeClientStream incomingMessagePipe = pipeManager.OpenIncomingPipe(pipeName);
             StreamReader inputStream = new StreamReader(incomingMessagePipe);
+            Utility messageFormatter = new Utility();
 
 
 
-
+            //Check to ensure the client hasn't signaled that they wish to shutdown the application
+            while (User.ClientID != null)
+            {
+                //Read the incoming data from the steam, format the message, and add it to the output window
+                string formattedMessage = inputStream.ReadLine();
+                formattedMessage = messageFormatter.BuildDisplayString(formattedMessage);
+                OutputTextBox.Text = OutputTextBox.Text + Environment.NewLine + formattedMessage;
+            }
         }
 
 
@@ -94,22 +110,36 @@ namespace Client
         */
         public void ThreadedSender()
         {
-
-
             //Open the necessary connections for writing to the server
             ClientStreamPipe pipeManager = new ClientStreamPipe();
-            NamedPipeClientStream outgoingMessagePipe = pipeManager.OpenOutgoingPipe();
+
+            FileIO fileManager = new FileIO();
+            string pipeName = fileManager.ReadXMLDocument("pipeName-outgoing");      //string indicator of the element to search in the XML doc
+            NamedPipeClientStream outgoingMessagePipe = pipeManager.OpenOutgoingPipe(pipeName);
             StreamWriter outputStream = new StreamWriter(outgoingMessagePipe);
+            Utility messageFormatter = new Utility();
 
 
-            //Format the outgoing message
-            //DEBUG CHECK THE USERS MESSAGE IF ITS ACTUALLY CONTAINING SOMETHING
-            //DEBUG run the string through the encoding method and return the byte array
-            //
 
-            //Write the users complete message to the pipe
-            outputStream.WriteLine(User.Message);
-            outputStream.Flush();
+            //Check to ensure the client hasn't signaled that they wish to shutdown the application
+            while (User.ClientID != null)
+            {
+
+                //Check the user has a message ready to send
+                if (User.Message != null)
+                {
+                    //ASCII encode the string, and build the output message as: clientID, clientCommand, clientString/textbox input
+                    string outboundMessage = messageFormatter.ASCIIEncodeMessage(User.Message);
+                    outboundMessage = messageFormatter.BuildOutboundString(User.ClientID, User.Command, User.Message);
+                    outputStream.WriteLine(outboundMessage);
+                    outputStream.Flush();
+
+
+                    //Reset the client's message components before the next cycle
+                    User.Command = null;
+                    User.Message = null;
+                }
+            }
         }
 
 
@@ -128,6 +158,8 @@ namespace Client
         */
         private void MenuSaveClick(object menuUIEvent, RoutedEventArgs eventTrigger)
         {
+            FileIO fileManager = new FileIO();
+
 
             try
             {
@@ -154,12 +186,8 @@ namespace Client
                         //Get the filepath from the diolog box, and select all the text in the document
                         string filepath = saveFileWindow.FileName;
 
-                        //DEBUG HOW TO SELECT ALL THE TEXT IN THE INPUT WINDOW?
-                        //string selectedText = InputTextBox.SelectAll();
-
 
                         //Split the text into the string array, and write each line to the file
-                        FileIO fileManager = new FileIO();
                         OutputTextBox.SelectAll();
                         string textboxContents = OutputTextBox.SelectedText;
                         string[] textArray = Utility.StringSplitter(textboxContents);
@@ -171,8 +199,8 @@ namespace Client
 
             catch (Exception errorMessage)
             {
-                //DEBUG ADD LOGGING METHOD
-                Logger.LogApplicationEvents("DEBUG INSERT FILEPATH FROM XML", errorMessage.ToString());
+                string filepath = fileManager.ReadXMLDocument("logFilePath");   //Indicator of the element to search in the XML doc
+                Logger.LogApplicationEvents(filepath, errorMessage.ToString());
             }
 
         }//MenuSaveClick
@@ -186,10 +214,6 @@ namespace Client
         *   object menuUIEvent : The object from which the event was triggered
         *   RoutedEventArgs eventTrigger : Identifier for the triggered event
         *  RETURNS       : void : The method has no return value
-        *  
-        *  References: The source code, and C# image found in the About window were retrieved from the following sources,
-        *  Bakalenyik, M. (ND). C#: Static vs Non-Static Classes and Static vs Instance Methods. Retrieved on Oct 5, 2018, from
-        *       https://hackernoon.com/c-static-vs-instance-classes-and-methods-50fe8987b231 
         *  
         *  Mika, N. (2018). WpfApp1 [source code]. Retrieved on Oct 5, 2018, from Conestoga College, Doon Campus, K Drive
         */
@@ -215,7 +239,8 @@ namespace Client
         */
         private void MenuExitClick(object menuUIEvent, RoutedEventArgs eventTrigger)
         {
-            Application.Current.Shutdown();    //Close the application
+            User.Command = "-1";                //clientCommand of -1 means clientShutdown; informs the server to remove the pipes used by the client
+            Application.Current.Shutdown();     //Close the application
 
         }//MenuExitClick
 
@@ -257,8 +282,9 @@ namespace Client
 
             catch (Exception errorMessage)
             {
-                //DEBUG ADD LOGGING METHOD
-                throw new NotImplementedException();
+                FileIO fileManager = new FileIO();
+                string filepath = fileManager.ReadXMLDocument("logFilePath");   //Indicator of the element to search in the XML doc
+                Logger.LogApplicationEvents(filepath, errorMessage.ToString());
             }
 
         }//WindowExit
@@ -284,6 +310,7 @@ namespace Client
                     {
 
                         //Save the message, and clear the textbox
+                        User.Command = "1";                 //clientCommand of 1 marks the message as ordinary; informs the server to  redirect the message to all clients
                         User.Message = textboxContents;
                         InputTextBox.Text = "";
                     }
@@ -305,13 +332,6 @@ namespace Client
         {
             int charCount = InputTextBox.Text.Length;
             charCountOutput.Text = charCount.ToString();
-
-
-            if (charCount > 2000)
-            {
-                //DEBUG style the text to look red
-
-            }
         }
 
     }//class

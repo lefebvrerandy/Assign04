@@ -1,0 +1,23 @@
+<!--
+	FILE          : constants.xml
+	PROJECT       : PROG 2120 - Assignment 4
+	PROGRAMMER    : Bence Karner & Randy Lefebvre
+	DESCRIPTION   : This file contains the constants used by the clients. It contains 
+						 the file paths used for logging events/errors, and the pipe names
+						 used to communicate with the server
+-->
+
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<constants>
+		<networking>
+			<pipeName>
+				<incoming>serverOut</incoming>
+				<outgoing>serverIn</outgoing>
+			</pipeName>
+		</networking>
+		<filePaths>
+			<logFile>EventLog.txt</logFile>
+		</filePaths>
+	<constants>
+</root>

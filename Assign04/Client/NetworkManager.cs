@@ -12,6 +12,7 @@ using System.Text;
 using System.Net;
 using System.IO;
 using System.IO.Pipes;
+using System.Xml;
 namespace Client
 {
 
@@ -26,31 +27,39 @@ namespace Client
         /*  
         *  METHOD        : 
         *  DESCRIPTION   : 
-        *  PARAMETERS    : void : Takes no arguments
+        *  PARAMETERS    : 
         *  RETURNS       : NamedPipeClientStream : A reference to the connected pipe that was just opened
         */
-        public NamedPipeClientStream OpenOutgoingPipe()
+        public NamedPipeClientStream OpenOutgoingPipe(string pipeName)
         {
+
             NamedPipeClientStream establishedClientPipe = null;
             try
             {
-                establishedClientPipe = new NamedPipeClientStream(".", DEBUG, PipeDirection.Out);
+                establishedClientPipe = new NamedPipeClientStream(".", pipeName, PipeDirection.Out);
                 establishedClientPipe.Connect();
             }
 
             //Inform the user that they can't connect to the server using the pipe
             catch (Exception errorMessage)
             {
-                if((errorMessage is ArgumentNullException) || (errorMessage is ArgumentException))
+
+                //Grab the filepath for the logger
+                FileIO fileManager = new FileIO();
+                string filepath = fileManager.ReadXMLDocument("logFilePath");   //Indicator of the element to search in the XML doc
+
+
+                //Decide which exception path is taken based on the error
+                if ((errorMessage is ArgumentNullException) || (errorMessage is ArgumentException))
                 {
-                    UIController.PrintErrorToMessageBox("PipeError: ", "Unable to open " + pipeName.Tostring() + " pipe; check the pipe name, and ensure it's valid");
-                    Logger.LogApplicationEvents("DEBUG FIEPATH", "");
+                    UIController.PrintErrorToMessageBox("PipeError: ", "Unable to open " + pipeName + " pipe; check the pipe name, and ensure it's valid");
+                    Logger.LogApplicationEvents(filepath, errorMessage.ToString());
                 }
 
                 else
                 {
                     UIController.PrintErrorToMessageBox("GenericError: ", errorMessage.ToString());
-                    Logger.LogApplicationEvents("DEBUG FIEPATH", errorMessage.ToString());
+                    Logger.LogApplicationEvents(filepath, errorMessage.ToString());
                 }
             }
             
@@ -62,31 +71,38 @@ namespace Client
         /*  
         *  METHOD        : 
         *  DESCRIPTION   : 
-        *  PARAMETERS    : void : Takes no arguments
+        *  PARAMETERS    : 
         *  RETURNS       : NamedPipeClientStream :
         */
-        public NamedPipeClientStream OpenIncomingPipe()
+        public NamedPipeClientStream OpenIncomingPipe(string pipeName)
         {
             NamedPipeClientStream establishedClientPipe = null;
             try
             {
-                establishedClientPipe = new NamedPipeClientStream(".", DEBUG, PipeDirection.In);
+                establishedClientPipe = new NamedPipeClientStream(".", pipeName, PipeDirection.In);
                 establishedClientPipe.Connect();
             }
 
             //Inform the user that they can't connect to the server using the pipe
             catch (Exception errorMessage)
             {
+
+                //Grab the filepath for the logger
+                FileIO fileManager = new FileIO();
+                string filepath = fileManager.ReadXMLDocument("logFilePath");   //Indicator of the element to search in the XML doc
+
+
+                //Decide which exception path is taken based on the error
                 if ((errorMessage is ArgumentNullException) || (errorMessage is ArgumentException))
                 {
-                    UIController.PrintErrorToMessageBox("PipeError: ", "Unable to open " + pipeName.Tostring() + " pipe; check the pipe name, and ensure it's valid");
-                    Logger.LogApplicationEvents("DEBUG FIEPATH", "");
+                    UIController.PrintErrorToMessageBox("PipeError: ", "Unable to open " + pipeName + " pipe; check the pipe name, and ensure it's valid");
+                    Logger.LogApplicationEvents(filepath, errorMessage.ToString());
                 }
 
                 else
                 {
                     UIController.PrintErrorToMessageBox("GenericError: ", errorMessage.ToString());
-                    Logger.LogApplicationEvents("DEBUG FIEPATH", errorMessage.ToString());
+                    Logger.LogApplicationEvents(filepath, errorMessage.ToString());
                 }
             }
 
