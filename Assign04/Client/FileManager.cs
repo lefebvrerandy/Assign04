@@ -11,10 +11,13 @@
 */
 
 
+
 using System;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 namespace Client
 {
 
@@ -144,38 +147,51 @@ namespace Client
 
 
 
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
         public string ReadXMLDocument(string elementToLocate)
         {
             string  stringFromDocument = string.Empty;
-            var constantsDocument = new XmlDataDocument();
-
             try
             {
-                constantsDocument.LoadXml("constnats.xml");
+                //Load the xml file
+                XDocument constantsDocument = XDocument.Load("../../constants.xml");
 
 
                 //Look for the pipe name element
                 if (elementToLocate == "pipeName-incoming")
                 {
-                    constantsDocument.SelectNodes("/root/constants/networking/pipename/incoming");
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/incomingPipe").Value;
                 }
 
 
                 else if (elementToLocate == "pipeName-outgoing")
                 {
-                    constantsDocument.SelectNodes("/root/constants/networking/pipename/outgoing");
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/outgoingPipe").Value;
+                }
+
+
+                else if (elementToLocate == "pipeName-clientStatus")
+                {
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/statusPipe").Value;
                 }
 
                 //Look for the log file path
                 else if (elementToLocate == "logFilePath")
                 {
-                    constantsDocument.SelectNodes("/root/constants/filePaths/logFile");
+
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/filePaths/logFile").Value;
                 }
+
 
                 //Incorrect element name was given
                 else
                 {
-                    throw new Exception();
+                    throw new Exception();  //Exception was added on purpose so that it triggers a log of the error
                 }
             }
 
@@ -188,6 +204,5 @@ namespace Client
 
             return stringFromDocument;
         }//ReadXMLDocument
-
     }//class
 }//namespace

@@ -86,7 +86,7 @@ namespace Client
 
 
             //Reject the users name if it's greater than the max of 16 chars or less than 1
-            if ((stringToCheck.Length < 17) && (stringToCheck.Length > 0))
+            if ((stringToCheck.Length > 0) && (stringToCheck.Length < 17))
             {
                 isStringValid = true;
             }

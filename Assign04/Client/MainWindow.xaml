@@ -13,7 +13,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Closing="WindowExit"
-        Title="Client Chat Application" Height="601" Width="900" Topmost="True">
+        Title="Client Chat Application" Height="607" Width="900" Topmost="False" ResizeMode="NoResize">
 
     <!-- Commands for executing menu options found in the File tab -->
     <Window.CommandBindings>
@@ -31,7 +31,6 @@
                         <Image Source="assets/saveFileIcon.png"/>
                     </MenuItem.Icon>
                 </MenuItem>
-                <Separator/>
 
 
                 <!-- Option for exiting the application -->
@@ -55,21 +54,21 @@
 
 
         <!-- Define the primary input/text areas -->
-        <TextBox Margin="1" FontSize="12" Height="19" TextAlignment="Left">Incoming Messages:</TextBox>
-        <TextBox Name="OutputTextBox" Height="368" TextWrapping="Wrap"  IsReadOnly="True" Text=""/>
+        <Label Margin="1" FontSize="10" Height="24" Content="Incoming Messages: "></Label>
+        <TextBox Name="OutputTextBox" Height="364" TextWrapping="Wrap"  IsReadOnly="True" Text=""/>
         <Separator/>
         <Label Name="userNameLabel" Content="UserName: " Height="25"/>
-        <TextBox Margin="0,0,0,0" FontSize="12" Height="20" Text="Outgoing Messages:"/>
-        <TextBox Name ="InputTextBox" Height="50" TextWrapping="Wrap" TextAlignment="Left" 
+        <Label Margin="0,0,0,0" FontSize="10" Height="24" Content="Outgoing Messages:"/>
+        <TextBox Name ="InputTextBox" Height="54" TextWrapping="Wrap" TextAlignment="Left" 
                  TextChanged="TextScanner" AcceptsReturn="True" SpellCheck.IsEnabled="True" Text=""/>
+        <Button Margin="422,10" Content="Clear"/>
 
 
         <!-- Give the user the option to clear the input area of text quickly -->
-        <Button Margin="10" Width="50">Clear</Button>
 
 
         <!-- Display the character count in the lower status bar -->
-        <StatusBar Height="19" >
+        <StatusBar Height="21" >
             <TextBlock Text="Char Count: " Height="auto" Width="70" FontWeight="Bold" />
             <TextBlock Name="charCountOutput" Width="Auto" />
         </StatusBar>

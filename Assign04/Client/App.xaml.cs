@@ -28,12 +28,19 @@ namespace Client
 
     public partial class App : Application
     {
+
+        [STAThread]
         public static void Main()
         {
 
             //Instantiate the applications base WPF components
-            App applicationMain = new App();
+            var applicationMain = new App();
             applicationMain.InitializeComponent();
+
+
+            //Name the main thread for identification once the chat window is up
+            Thread mainThread = Thread.CurrentThread;
+            mainThread.IsBackground = true;
             User.ClientID = null;
 
 
@@ -44,47 +51,16 @@ namespace Client
             Logger.LogApplicationEvents(filepath, "APPLICATION START");
 
 
-            //Open pipe used to signal to the server that the client is stil alive and functioning
-            ClientStreamPipe pipeManager = new ClientStreamPipe();
-
-
-            string pipeName = fileManager.ReadXMLDocument("pipeName-outgoing");      //string indicator of the element to search in the XML doc
-            object outgoingStatusPipe = pipeManager.OpenOutgoingPipe(pipeName);
-            //Thread clientStatusThread = new Thread();
-
-
             //Begin the chat application
-            Thread mainThread = Thread.CurrentThread;
-            mainThread.IsBackground = true;
             applicationMain.Run();
 
 
+            //Open pipe used to signal to the server that the client is stil alive and functioning
+            ClientStreamPipe pipeManager = new ClientStreamPipe();
+            //string pipeName = fileManager.ReadXMLDocument("pipeName-clientStatus");     DEBUG ADD BEFORE SUBMISSION
+            //object outgoingStatusPipe = pipeManager.OpenOutgoingPipe(pipeName);
             //Join the remaining threads, and exit the application
-        }
-
-
-
-        /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
-        */
-        public void LaunchLoginWindow(object sender, StartupEventArgs args)
-        {
-
-            //Open the LoginWindow, and get the user's userName
-            LoginWindow loginScreen = new LoginWindow();
-            loginScreen.Owner = Application.Current.MainWindow;
-            loginScreen.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            loginScreen.ShowDialog();
-
-
-            //Check if the user entered a valid userName, if not, close the chat window and exit the program
-            if (User.ClientID == null)
-            {
-                Application.Current.Shutdown();
-            }
+            //DEBUG DELETE THESE BEFORE SUBMISSION
         }
     }//class
 }//namespace

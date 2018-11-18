@@ -39,10 +39,6 @@ namespace Client
     */
     public partial class MainWindow : Window
     {
-
-        private bool ChangesMade { get; set; }     //Auto property for checking if changes have been made to the document
-
-
         /*  
         *  METHOD        : MainWindow
         *  DESCRIPTION   : This method is used to instantiate the elements of the window
@@ -51,21 +47,35 @@ namespace Client
         */
         public MainWindow()
         {
-
             InitializeComponent();
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            ChangesMade = false;
 
 
+            //Open the LoginWindow, and get the user's userName
+            LoginWindow loginScreen = new LoginWindow();
+            loginScreen.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            loginScreen.ShowDialog();
+
+
+            //Check if the user entered a valid userName, if not, close the chat window and exit the program
+            if (User.ClientID == null)
+            {
+                Application.Current.Shutdown();
+            }
+
+            //Create a thread for managing  incoming messages, and printing to the output textbox
             Thread incomingMessageManager = new Thread(ThreadedListener);
+            incomingMessageManager.Name = "ThreadedListener";
             incomingMessageManager.Start();
 
 
+            //Create a therad ofr managing outgoing messages
             Thread outgoingMessageManager = new Thread(ThreadedSender);
+            outgoingMessageManager.Name = "ThreadedSender";
             outgoingMessageManager.Start();
 
 
-            userNameLabel.Content = User.ClientID;
+            userNameLabel.Content = "Username: " + User.ClientID;
         }//MainWindow
 
 
@@ -93,6 +103,7 @@ namespace Client
             //Check to ensure the client hasn't signaled that they wish to shutdown the application
             while (User.ClientID != null)
             {
+
                 //Read the incoming data from the steam, format the message, and add it to the output window
                 string formattedMessage = inputStream.ReadLine();
                 formattedMessage = messageFormatter.BuildDisplayString(formattedMessage);
@@ -258,24 +269,19 @@ namespace Client
         {
             try
             {
-
-                //Check if changes were made to the document before confirming the user wants to exit
-                if (ChangesMade == true)
+                MessageBoxResult exitConfirmation = MessageBox.Show("Are you sure you wish to exit?", "Exit Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (exitConfirmation == MessageBoxResult.Yes)
                 {
-                    MessageBoxResult exitConfirmation = MessageBox.Show("Are you sure you wish to exit?", "Exit Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (exitConfirmation == MessageBoxResult.Yes)
-                    {
-                        //Exit confirmed, close the application
-                        RoutedEventArgs newEventTrigger = new RoutedEventArgs();
-                        MenuExitClick(menuUIEvent, newEventTrigger);
-                    }
+                    //Exit confirmed, close the application
+                    RoutedEventArgs newEventTrigger = new RoutedEventArgs();
+                    MenuExitClick(menuUIEvent, newEventTrigger);
+                }
 
 
-                    else
-                    {
-                        //The user indicated they don't want to close the application
-                        eventTrigger.Cancel = true;
-                    }
+                else
+                {
+                    //The user indicated they don't want to close the application
+                    eventTrigger.Cancel = true;
                 }
             }
 
