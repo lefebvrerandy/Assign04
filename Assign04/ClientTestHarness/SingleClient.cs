@@ -8,7 +8,7 @@ using System.Threading;
 
 public class PipeClient
 {
-    private static int numClients = 4;
+    private static int numClients = 100;
 
     public static void Main(string[] Args)
     {
@@ -30,47 +30,42 @@ public class PipeClient
         // disconnect from server
         // return loop 2
 
-        if (Args.Length > 0)
+
+
+     NamedPipeClientStream pipeClient =
+        new NamedPipeClientStream(".", "testpipe",
+        PipeDirection.InOut, PipeOptions.None,
+        TokenImpersonationLevel.Impersonation);
+
+        Console.WriteLine("Connecting to server...\n");
+        pipeClient.Connect();
+
+        StreamString ss = new StreamString(pipeClient);
+        // Validate the server's signature string
+        if (ss.ReadString() == "I am the one true server!")
         {
-            if (Args[0] == "spawnclient")
-            {
-                NamedPipeClientStream pipeClient =
-                    new NamedPipeClientStream(".", "testpipe",
-                        PipeDirection.InOut, PipeOptions.None,
-                        TokenImpersonationLevel.Impersonation);
+            // The client security token is sent with the first write.
+            // Send the name of the file whose contents are returned
+            // by the server.
+            ss.WriteString("c:\\textfile.txt");
 
-                Console.WriteLine("Connecting to server...\n");
-                pipeClient.Connect();
-
-                StreamString ss = new StreamString(pipeClient);
-                // Validate the server's signature string
-                if (ss.ReadString() == "I am the one true server!")
-                {
-                    // The client security token is sent with the first write.
-                    // Send the name of the file whose contents are returned
-                    // by the server.
-                    ss.WriteString("c:\\textfile.txt");
-
-                    // Print the file to the screen.
-                    Console.Write(ss.ReadString());
-                }
-                else
-                {
-                    Console.WriteLine("Server could not be verified.");
-                }
-                pipeClient.Close();
-                // Give the client process some time to display results before exiting.
-                Thread.Sleep(4000);
-            }
+            // Print the file to the screen.
+            Console.Write(ss.ReadString());
         }
         else
         {
-            Console.WriteLine("\n*** Waiting for server ***\n");
-
+            Console.WriteLine("Server could not be verified.");
         }
+        pipeClient.Close();
+                // Give the client process some time to display results before exiting.
+        Thread.Sleep(4000);
+
+
+
         Console.ReadKey();
     }
 
+}
 // Defines the data protocol for reading and writing strings on our stream
 public class StreamString
 {
