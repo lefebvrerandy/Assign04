@@ -134,5 +134,14 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="constants.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="assets\CsharpProgramImage.png" />
+    <Resource Include="assets\exitAppIcon.png" />
+    <Resource Include="assets\infoIcon.png" />
+    <Resource Include="assets\saveFileIcon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

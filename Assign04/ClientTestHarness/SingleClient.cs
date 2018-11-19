@@ -64,6 +64,7 @@ public class PipeClient
 
         Console.ReadKey();
     }
+}
 
 }
 // Defines the data protocol for reading and writing strings on our stream

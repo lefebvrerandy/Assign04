@@ -23,11 +23,6 @@ namespace Server
             //Thread Server;
             ServerPipeLoop.Start();
 
-            while (true)
-            {
-                Thread.Sleep(1000);
-            }
-
         }
 
         private static void ServerAcceptLoopThread(object data)
@@ -40,6 +35,7 @@ namespace Server
             //  From there the method will spawn a new thread for each
             while (true)
             {
+
                 ServerPipes serverPipe = new ServerPipes();
 
                 NamedPipeServerStream pipe_in = serverPipe.OpenInPipe(pipename);
