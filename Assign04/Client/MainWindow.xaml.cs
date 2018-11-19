@@ -248,9 +248,19 @@ namespace Client
         *   RoutedEventArgs eventTrigger : 
         *  RETURNS       : 
         */
-        private void Automate_Messages(object menuUIEvent, RoutedEventArgs eventTrigger)
+        private void Automate_Messages(object sender, RoutedEventArgs e)
         {
-            
+            bool flag = Automate.IsChecked;
+            if (Automate.IsEnabled)
+            {
+                //Generate random string
+                Utility generatedString = new Utility();
+                Thread.Sleep(generatedString.AutomateGenerateSleep());                  // Generate the sleep timer
+                string stringRnd = generatedString.AutomateGenerateString(); // Generate the random string
+                int cursorPosition = InputTextBox.SelectionStart;
+                InputTextBox.SelectedText = stringRnd;              // Put the contents into the textbox
+                
+            } 
 
 
         }//Automate_Messages
