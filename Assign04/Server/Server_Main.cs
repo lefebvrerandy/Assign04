@@ -29,7 +29,7 @@ namespace Server
 
 
             int i;
-            
+            DataRepository.MessageCounter = 0;
 
             //Thead the server, and go into a wait loop
             Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
