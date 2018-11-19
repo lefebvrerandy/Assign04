@@ -71,6 +71,7 @@ namespace Server
                 SendToClients.Start(pipe_out);
 
                 openPipes.ClientCounter++;
+                Console.ReadKey();
             }
         }
 
@@ -83,7 +84,9 @@ namespace Server
 
             //Open an stream to the pipe taking incoming messages, and write the message to the string
             StreamReader readFromPipe = new StreamReader(Client_IN);
-            string incomingMessage = Console.ReadLine();                //Readline will block the thread until the client sends a message
+            //string incomingMessage = Console.ReadLine();                //Readline will block the thread until the client sends a message
+            StreamReader sr = new StreamReader(Client_IN);
+            string incomingMessage = sr.ReadLine();
             DataRepository.AddMessageToRepository(incomingMessage);
 
 
@@ -113,9 +116,10 @@ namespace Server
             //For every message thats added the messageRepository, the thread managing incoming messages will increment the counter
             while (true)
             {
+                Thread.Sleep(1000);
                 if (DataRepository.MessageCounter > currentMessageCount)
                 {
-
+                    Thread.Sleep(500);
                     //A new message has been added to the rep since the last check
                     //Grab the message associate with the current counter, and send it out to the client
                     string outgoingClientMessage = string.Empty;
