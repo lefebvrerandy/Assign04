@@ -3,7 +3,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Text;
 using System.Threading;
-
+using System.Collections.Generic;
 
 
 namespace Server
@@ -14,48 +14,52 @@ namespace Server
 
         private static int numThreads = 3;
 
-        string pipename = "test";
-        NamedPipeServerStream pipeServer = null;
+        //string pipename = "test";
+        //NamedPipeServerStream pipeServer = null;
+
 
         public static void Main()
         {
 
-            //Open create a file used for logging errors, and log the application start time
+            //Grab the filepath for the event logger, and log the server start time
             FileIO fileManager = new FileIO();
             string filepath = fileManager.ReadXMLDocument("logFilePath");
             fileManager.CreateFile(filepath);
             Logger.LogApplicationEvents(filepath, "SERVER START");
 
 
-
-
             int i;
-            
-            Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
-            //Thread Server;
-            ServerPipeLoop.Start();
+            DataRepository.MessageCounter = 0;
 
+            //Thead the server, and go into a wait loop
+            Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
+            ServerPipeLoop.Name = "ServerPipeLoopThread";
+            ServerPipeLoop.Start();
             while (true)
             {
                 Thread.Sleep(1000);
             }
 
+
         }
 
         private static void ServerAcceptLoopThread(object data)
         {
-            // Pipe name
-            //string pipename = "test";
+
+            //Define the pipe names
+            string incomingPipeName = "serverIn";
+            string outgoingPipename = "serverOut";
+
 
             // This is an endless loop. This loop will 
-            // Open two pipes per client, one being the IN pipe, other being the OUT pipe
+            // open two pipes per client, one being the IN pipe, other being the OUT pipe
             //  From there the method will spawn a new thread for each
             while (true)
             {
 
                 ServerPipes openPipes = new ServerPipes();
-                NamedPipeServerStream pipe_in = openPipes.OpenInPipe("serverIn");
-                NamedPipeServerStream pipe_out = openPipes.OpenOutPipe("serverOut");
+                NamedPipeServerStream pipe_in = openPipes.OpenInPipe(incomingPipeName);
+                NamedPipeServerStream pipe_out = openPipes.OpenOutPipe(outgoingPipename);
 
 
                 // Start a new thread, Send the pipe_in pipe to the new thread
@@ -65,15 +69,22 @@ namespace Server
                 // Start a new thread, Send the pipe_out pipe to the new thread
                 Thread SendToClients = new Thread(SendToAllClients);
                 SendToClients.Start(pipe_out);
+
+                openPipes.ClientCounter++;
             }
         }
+
         private static void RecieveFromAllClients(object data)
         {
-            // Cast the object as the proper datatype
+
+            //Cast the object as the proper datatype
             NamedPipeServerStream Client_IN = null;
             Client_IN = (NamedPipeServerStream)data;
 
-
+            //Open an stream to the pipe taking incoming messages, and write the message to the string
+            StreamReader readFromPipe = new StreamReader(Client_IN);
+            string incomingMessage = Console.ReadLine();                //Readline will block the thread until the client sends a message
+            DataRepository.AddMessageToRepository(incomingMessage);
 
 
         }
@@ -84,8 +95,38 @@ namespace Server
             NamedPipeServerStream Client_OUT = null;
             Client_OUT = (NamedPipeServerStream)data;
 
-            // This is where we will recieve the information from the client, and send it to the
-            //  OUT stream for each client.
+
+            //Open a new stream to the outgoing pipe
+            StreamWriter outputStream = new StreamWriter(Client_OUT);
+
+
+            //Grab a reference to the dictionary in the DataRepository class
+            Dictionary<int, string> refToMessageRepository = new Dictionary<int, string>();
+            refToMessageRepository = DataRepository.MessageRepository;
+
+
+            //Save the current message count in the ditctionary
+            int currentMessageCount = DataRepository.MessageCounter;
+
+
+            //Keep cycling looking for new messages in the dictionary
+            //For every message thats added the messageRepository, the thread managing incoming messages will increment the counter
+            while (true)
+            {
+                if (DataRepository.MessageCounter > currentMessageCount)
+                {
+
+                    //A new message has been added to the rep since the last check
+                    //Grab the message associate with the current counter, and send it out to the client
+                    string outgoingClientMessage = string.Empty;
+                    refToMessageRepository.TryGetValue(currentMessageCount + 1, out outgoingClientMessage);
+                    outputStream.WriteLine(outgoingClientMessage);
+
+
+                    //Increment the message counter and cycle back to check again for a new message
+                    currentMessageCount++;
+                }
+            }
 
         }
 

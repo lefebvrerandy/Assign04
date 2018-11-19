@@ -9,6 +9,8 @@ namespace Server
     public class ServerPipes
     {
 
+        public int ClientCounter { get; set; }  //Counts the number of clients currently connected to the server
+
 
         //  METHOD        : OpenOutPipe()
         //  DESCRIPTION   : 
@@ -25,7 +27,7 @@ namespace Server
                 ServerOutPipe.WaitForConnection();
             }
 
-            // This is the error handling exception. This will Post information to the eventlogger
+            //This is the error handling exception. This will Post information to the eventlogger
             catch (Exception errorMessage)
             {
                 Console.WriteLine(errorMessage.ToString());
@@ -51,7 +53,7 @@ namespace Server
                 ServerInPipe.WaitForConnection();
             }
 
-            // This is the error handling exception. This will Post information to the eventlogger
+            // This is the error handling exception
             catch (Exception errorMessage)
             {
                 Console.WriteLine(errorMessage.ToString());
