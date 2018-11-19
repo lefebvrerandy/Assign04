@@ -33,7 +33,7 @@
                 </MenuItem>
 
                 <!-- Automate Outgoing messages -->
-                <MenuItem Header="_Automate Messages" Click="Automate_Messages" IsCheckable="True">
+                <MenuItem x:Name="Automate" Header="_Automate Messages" Checked="Automate_Messages" IsCheckable="True">
                     <!--
                     <MenuItem.Icon>
                         <Image Source="assets/saveFileIcon.png"/>

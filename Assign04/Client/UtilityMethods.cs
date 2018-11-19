@@ -182,5 +182,61 @@ namespace Client
             return encodedString;
 
         }//GetClientInput
+
+
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        public string AutomateGenerateString(/*string userName*/)
+        {
+            // Random a name,
+            //string user_name = userName;
+            //string command = "1";
+            string message = string.Empty;
+            string GeneratedString = string.Empty;
+            string[] randomString = new string[] 
+            {
+                "anyone asked the camel if he’s happy about it?",
+                "If Purple People Eaters are real… where do they find purple people to eat?",
+                "Where do random thoughts come from?",
+                "If you like tuna and tomato sauce- try combining the two. It’s really not as bad as it sounds.",
+                "Sometimes, all you need to do is completely make an ass of yourself and laugh it off to realise that life isn’t so bad after all.",
+                "It was getting dark, and we weren’t there yet.",
+                "He ran out of money, so he had to stop playing poker.",
+                "This is a Japanese doll.",
+                "This is the last random sentence I will be writing and I am going to stop mid-sent",
+                "My Mum tries to be cool by saying that she likes all the same things that I do."
+            };
+            Random rnd = new Random();
+
+            //int randomIndex = rnd.Next(randomString.Length);
+            int randomIndex = rnd.Next(0, 9);
+
+            //GeneratedString = BuildOutboundString(user_name, command, randomString[randomIndex]);
+            GeneratedString = randomString[randomIndex] + "";     // Set up the generated string and add the newline character at the end'\n'
+
+            return GeneratedString;
+        }//AutomateGenerateString
+
+
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        public int AutomateGenerateSleep()
+        {
+            //
+            Random rnd = new Random();
+            int randomSleep = rnd.Next(100, 1000);
+
+            return randomSleep;
+        }//AutomateGenerateString
     }//class
 }//namespace
