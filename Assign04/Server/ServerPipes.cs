@@ -26,9 +26,9 @@ namespace Server
             }
 
             // This is the error handling exception. This will Post information to the eventlogger
-            catch (Exception e)
+            catch (Exception errorMessage)
             {
-
+                Console.WriteLine(errorMessage.ToString());
             }
 
             return ServerOutPipe;
@@ -52,9 +52,9 @@ namespace Server
             }
 
             // This is the error handling exception. This will Post information to the eventlogger
-            catch (Exception e)
+            catch (Exception errorMessage)
             {
-
+                Console.WriteLine(errorMessage.ToString());
             }
 
             return ServerInPipe;

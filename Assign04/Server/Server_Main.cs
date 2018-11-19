@@ -10,6 +10,8 @@ namespace Server
 {
     public class Server_Main
     {
+
+
         private static int numThreads = 3;
 
         string pipename = "test";
@@ -17,6 +19,16 @@ namespace Server
 
         public static void Main()
         {
+
+            //Open create a file used for logging errors, and log the application start time
+            FileIO fileManager = new FileIO();
+            string filepath = fileManager.ReadXMLDocument("logFilePath");
+            fileManager.CreateFile(filepath);
+            Logger.LogApplicationEvents(filepath, "SERVER START");
+
+
+
+
             int i;
             
             Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
@@ -32,19 +44,18 @@ namespace Server
 
         private static void ServerAcceptLoopThread(object data)
         {
+            // Pipe name
+            string pipename = "test";
 
             // This is an endless loop. This loop will 
             // Open two pipes per client, one being the IN pipe, other being the OUT pipe
             //  From there the method will spawn a new thread for each
             while (true)
             {
-                ServerPipes serverPipes = new ServerPipes();
 
-                // Clients incoming is actually our outgoing
-                NamedPipeServerStream pipe_out = serverPipes.OpenOutPipe("pipeName-incoming");
-                // Clients outgoing is actually our incoming
-                NamedPipeServerStream pipe_in = serverPipes.OpenInPipe("pipeName-outgoing");
-
+                ServerPipes openPipes = new ServerPipes();
+                NamedPipeServerStream pipe_in = openPipes.OpenInPipe(pipename);
+                NamedPipeServerStream pipe_out = openPipes.OpenOutPipe(pipename);
 
 
                 // Start a new thread, Send the pipe_in pipe to the new thread

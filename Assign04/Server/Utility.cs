@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 namespace Server
 {
+
     class Utility
     {
         public string ASCIIEncodeMessage(string outboundString)
@@ -30,10 +30,10 @@ namespace Server
             }
 
 
-            // This is the error handling exception. This will Post information to the eventlogger
-            catch (Exception e)
+            //Catch for non specific errors
+            catch (Exception errorMessage)
             {
-
+                Console.WriteLine(errorMessage.ToString());
             }
 
             return encodedString;
