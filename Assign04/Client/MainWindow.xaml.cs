@@ -241,6 +241,24 @@ namespace Client
 
 
         /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *   object menuUIEvent : 
+        *   RoutedEventArgs eventTrigger : 
+        *  RETURNS       : 
+        */
+        private void Automate_Messages(object menuUIEvent, RoutedEventArgs eventTrigger)
+        {
+            
+
+
+        }//Automate_Messages
+
+
+
+
+        /*  
         *  METHOD        : MenuExitClick
         *  DESCRIPTION   : This method is used to close the application when the user selects the Exit command from the File menu
         *  PARAMETERS    : Parameters are as follows,

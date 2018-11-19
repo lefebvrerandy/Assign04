@@ -32,16 +32,19 @@ namespace Server
 
         private static void ServerAcceptLoopThread(object data)
         {
-            // Pipe name
-            string pipename = "test";
 
             // This is an endless loop. This loop will 
             // Open two pipes per client, one being the IN pipe, other being the OUT pipe
             //  From there the method will spawn a new thread for each
             while (true)
             {
-                NamedPipeServerStream pipe_in = OpenInPipe(pipename);
-                NamedPipeServerStream pipe_out = OpenOutPipe(pipename);
+                ServerPipes serverPipes = new ServerPipes();
+
+                // Clients incoming is actually our outgoing
+                NamedPipeServerStream pipe_out = serverPipes.OpenOutPipe("pipeName-incoming");
+                // Clients outgoing is actually our incoming
+                NamedPipeServerStream pipe_in = serverPipes.OpenInPipe("pipeName-outgoing");
+
 
 
                 // Start a new thread, Send the pipe_in pipe to the new thread

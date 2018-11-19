@@ -32,6 +32,15 @@
                     </MenuItem.Icon>
                 </MenuItem>
 
+                <!-- Automate Outgoing messages -->
+                <MenuItem Header="_Automate Messages" Click="Automate_Messages" IsCheckable="True">
+                    <!--
+                    <MenuItem.Icon>
+                        <Image Source="assets/saveFileIcon.png"/>
+                    </MenuItem.Icon>
+                    -->
+                </MenuItem>
+
 
                 <!-- Option for exiting the application -->
                 <MenuItem Header="Exit" Click="MenuExitClick">
