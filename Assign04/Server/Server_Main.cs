@@ -1,40 +1,53 @@
-﻿using System;
+﻿/* 
+*  FILE          : Server.cs
+*  PROJECT       : PROG 2120 - Assignment 4
+*  PROGRAMMER    : Randy Lefebvre & Bence Karner
+*  DESCRIPTION   : This file contains the the starting point of the Server applications. The program 
+*                  creates a file, and logs the start of the application before executing its networking
+*                  functionality. The purpose of the server is to open unidirectional pipes for all incoming,
+*                  and outgoing connections from the clients. The applications recieves messages from the clients
+*                  and redirects them to everyone connected to the pipes. 
+*/
+
+
+
+using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
-
-
 namespace Server
 {
     public class Server_Main
     {
-
-
-        private static int numThreads = 3;
-
-        //string pipename = "test";
-        //NamedPipeServerStream pipeServer = null;
-
-
         public static void Main()
         {
 
-            //Grab the filepath for the event logger, and log the server start time
+            //Set the console windows attributes, and print the UI
+            Utility UIManager = new Utility();
+            UIManager.SetConsoleAttributes();
             FileIO fileManager = new FileIO();
+            fileManager.PrintConsoleUI();
+
+
+            //Grab the filepath for the event logger, and log the server start time
             string filepath = fileManager.ReadXMLDocument("logFilePath");
             fileManager.CreateFile(filepath);
             Logger.LogApplicationEvents(filepath, "SERVER START");
 
 
-            int i;
+            //Default the value of the message counter before a message is added
             DataRepository.MessageCounter = 0;
+
 
             //Thead the server, and go into a wait loop
             Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
             ServerPipeLoop.Name = "ServerPipeLoopThread";
             ServerPipeLoop.Start();
+
+
+            //Wait with the main thread until all child threads have returned
             while (true)
             {
                 Thread.Sleep(1000);
@@ -43,64 +56,108 @@ namespace Server
 
         }
 
-        private static void ServerAcceptLoopThread(object data)
+
+
+        /*  
+        *  METHOD        : ServerAcceptLoopThread
+        *  DESCRIPTION   : This method is used to open the incoming and outgoing pipes to the clients
+        *                   before theading off to open another connection
+        *  PARAMETERS    : void : The method takes no arguments
+        *  RETURNS       : void : The methods has no return
+        */
+        private static void ServerAcceptLoopThread()
         {
 
             //Define the pipe names
             string incomingPipeName = "serverIn";
             string outgoingPipename = "serverOut";
+            ServerPipes openPipes = new ServerPipes();
+            int initalClientConnection = 1;
 
 
-            // This is an endless loop. This loop will 
-            // open two pipes per client, one being the IN pipe, other being the OUT pipe
-            //  From there the method will spawn a new thread for each
-            while (true)
+
+            /*  Use the var  initalClientConnection to allow the thread to enter the main connection loop 
+             *  ONLY one the first cycle before a client has connected. For all other subsequent iterations 
+             *  of the loop keep cycling until all clients have shutdown, or logged off */
+            while ((initalClientConnection == 1) || (openPipes.ClientCounter > 0))
             {
 
-                ServerPipes openPipes = new ServerPipes();
+
+                Console.WriteLine("Waiting for connections...");
                 NamedPipeServerStream pipe_in = openPipes.OpenInPipe(incomingPipeName);
                 NamedPipeServerStream pipe_out = openPipes.OpenOutPipe(outgoingPipename);
 
 
                 // Start a new thread, Send the pipe_in pipe to the new thread
                 Thread RecieveFromClients = new Thread(RecieveFromAllClients);
+                RecieveFromClients.Name = "RecieveMessageThread";
                 RecieveFromClients.Start(pipe_in);
+
 
                 // Start a new thread, Send the pipe_out pipe to the new thread
                 Thread SendToClients = new Thread(SendToAllClients);
+                SendToClients.Name = "SendMessageThread";
                 SendToClients.Start(pipe_out);
 
+
+                //Increment the client counter so the server knows when to return
                 openPipes.ClientCounter++;
-                Console.ReadKey();
+                initalClientConnection = 0;
+                Console.WriteLine("Client {0} connected...", openPipes.ClientCounter++);
             }
         }
 
+
+
+        /*  
+        *  METHOD        : RecieveFromAllClients
+        *  DESCRIPTION   : This method is used to recieve messages from the clients,
+        *   and save them to the data repository where they can be accessed by the sending thread
+        *  PARAMETERS    : object data : Generic object type argument which us
+        *  cast to a pipe, and used to recieve incoming messages
+        *  RETURNS       : void : The methods has no return
+        */
         private static void RecieveFromAllClients(object data)
         {
 
-            //Cast the object as the proper datatype
+            //Cast the object as a pipe
             NamedPipeServerStream Client_IN = null;
             Client_IN = (NamedPipeServerStream)data;
 
-            //Open an stream to the pipe taking incoming messages, and write the message to the string
-            StreamReader readFromPipe = new StreamReader(Client_IN);
-            //string incomingMessage = Console.ReadLine();                //Readline will block the thread until the client sends a message
-            StreamReader sr = new StreamReader(Client_IN);
-            string incomingMessage = sr.ReadLine();
-            DataRepository.AddMessageToRepository(incomingMessage);
+
+            //Keep cycling an recieving new messages until the clients indicate they are shutting down
+            bool clientDisconnectCommand = false;
+            while (clientDisconnectCommand == false)
+            {
+                //Open an stream to the pipe taking incoming messages, and write the message to the string         
+                StreamReader readFromPipe = new StreamReader(Client_IN);
+                string incomingMessage = readFromPipe.ReadLine();
+                DataRepository.AddMessageToRepository(incomingMessage);
 
 
-        }
+            }
 
+        }//RecieveFromAllClients
+
+
+        /*  
+        *  METHOD        : SendToAllClients
+        *  DESCRIPTION   : This method is used to DEBUG
+        *  PARAMETERS    : void : The method takes no arguments
+        *  RETURNS       : void : The methods has no return
+        */
         private static void SendToAllClients(object data)
         {
-            // Cast the object as the proper datatype
+
+            //Cast the object as a 
             NamedPipeServerStream Client_OUT = null;
             Client_OUT = (NamedPipeServerStream)data;
 
 
+
             //Open a new stream to the outgoing pipe
             StreamWriter outputStream = new StreamWriter(Client_OUT);
+
 
 
             //Grab a reference to the dictionary in the DataRepository class
@@ -108,19 +165,23 @@ namespace Server
             refToMessageRepository = DataRepository.MessageRepository;
 
 
+
             //Save the current message count in the ditctionary
             int currentMessageCount = DataRepository.MessageCounter;
 
 
+
             //Keep cycling looking for new messages in the dictionary
             //For every message thats added the messageRepository, the thread managing incoming messages will increment the counter
-            while (true)
+            bool clientDisconnectCommand = false;
+            while (clientDisconnectCommand == false)
             {
-                Thread.Sleep(1000);
+
+                Thread.Sleep(100);
                 if (DataRepository.MessageCounter > currentMessageCount)
                 {
-                    Thread.Sleep(500);
-                    //A new message has been added to the rep since the last check
+                    Thread.Sleep(100);
+                    //A new message has been added to the reppsotory since the last check
                     //Grab the message associate with the current counter, and send it out to the client
                     string outgoingClientMessage = string.Empty;
                     refToMessageRepository.TryGetValue(currentMessageCount, out outgoingClientMessage);
@@ -132,49 +193,7 @@ namespace Server
                 }
             }
 
-        }
-
-
-        private static void ServerThread(object data)
-        {
-            NamedPipeServerStream pipeServer =
-                new NamedPipeServerStream("testpipe", PipeDirection.InOut, numThreads);
-
-            int threadId = Thread.CurrentThread.ManagedThreadId;
-
-            // Wait for a client to connect
-            pipeServer.WaitForConnection();
-
-            Console.WriteLine("Client connected on thread[{0}].", threadId);
-            try
-            {
-                // Read the request from the client. Once the client has
-                // written to the pipe its security token will be available.
-
-                StreamString ss = new StreamString(pipeServer);
-
-                // Verify our identity to the connected client using a
-                // string that the client anticipates.
-
-                ss.WriteString("I am the one true server!");
-                string filename = ss.ReadString();
-
-                // Read in the contents of the file while impersonating the client.
-                ReadFileToStream fileReader = new ReadFileToStream(ss, filename);
-
-                // Display the name of the user we are impersonating.
-                Console.WriteLine("Reading file: {0} on thread[{1}] as user: {2}.",
-                    filename, threadId, pipeServer.GetImpersonationUserName());
-                pipeServer.RunAsClient(fileReader.Start);
-            }
-            // Catch the IOException that is raised if the pipe is broken
-            // or disconnected.
-            catch (IOException e)
-            {
-                Console.WriteLine("ERROR: {0}", e.Message);
-            }
-            pipeServer.Close();
-        }
-    }
-}
+        }//SendToAllClients
+    }//class
+}//namepsace
 

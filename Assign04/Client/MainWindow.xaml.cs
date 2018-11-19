@@ -316,10 +316,15 @@ namespace Client
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : TextScanner
+        *  DESCRIPTION   : This event is used to scan the text entered by the user, and update the 
+        *   the char counter with each new character. Additionally, the method 
+        *   checks each cahracter to see if the '\n' char (ENTER) was entered; if true, then
+        *   it saves the users string and clears the input textbox
+        *  PARAMETERS    : parameters are as follows,
+        *  object sender:   The UI element which raised the event (Input textbox in this case)  
+        *  RoutedEventArgs e: Contains the event data, in this case it's data related to the textual input in the chat window
+        *  RETURNS       : void : This method has no return
         */
         private void TextScanner(object sender, RoutedEventArgs e)
         {
@@ -328,6 +333,7 @@ namespace Client
 
                 if (InputTextBox.Text.Length <= 2000)
                 {
+
                     //Dump the contents of the textbox into a string and scan for the newline char (signals a send command)
                     string textboxContents = InputTextBox.Text;
                     if (textboxContents.IndexOf("\n") > -1)
@@ -341,6 +347,7 @@ namespace Client
                 }
 
                 UpdateCharCount(sender, e);
+
             }//textbox is in focus
         }//TextScanner
 

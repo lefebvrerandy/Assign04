@@ -30,14 +30,45 @@ namespace Server
     class FileIO
     {
 
+        /*  
+        *  METHOD        : PrintConsoleUI
+        *  DESCRIPTION   : This method is used to open the text file containing the servers UI, and print 
+        *                  the design to the console
+        *  PARAMETERS    : void : The method takes no arguments
+        *  RETURNS       : void : The method has no return
+        */
+        public void PrintConsoleUI()
+        {
+            Console.Clear();
 
-       /*  
-       *  METHOD        : CreateFile
-       *  DESCRIPTION   : This method is used to create text file with the name supplied by the parameters; if one already exists, 
-       *                  then the method does nothing and returns
-       *  PARAMETERS    : string filePath : The file path of the file to be created
-       *  RETURNS       : void : The method has no return
-       */
+            try
+            {
+                //Load the text file containing the UI pattern, and print its contents to the console window
+                string filepath = ReadXMLDocument("serverUI");
+                var lines = File.ReadAllLines(filepath);
+                foreach (var line in lines)
+                {
+                    Console.WriteLine(line);
+                }
+            }
+
+
+            //If the file can't be found, or permission is denied, log the error
+            catch (FileNotFoundException fileError)
+            {
+                string filepath = ReadXMLDocument("logFilePath");   //Grab the filepath from the XML document
+                Logger.LogApplicationEvents(filepath, fileError.ToString());
+            }
+
+        }//PrintConsoleUI
+
+        /*  
+        *  METHOD        : CreateFile
+        *  DESCRIPTION   : This method is used to create text file with the name supplied by the parameters; if one already exists, 
+        *                  then the method does nothing and returns
+        *  PARAMETERS    : string filePath : The file path of the file to be created
+        *  RETURNS       : void : The method has no return
+        */
         public void CreateFile(string filePath)
         {
             try
@@ -169,22 +200,32 @@ namespace Server
                 }
 
 
+                
                 else if (elementToLocate == "pipeName-outgoing")
                 {
                     stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/outgoingPipe").Value;
                 }
 
 
+                //Look for the pipe used to signal the client's status
                 else if (elementToLocate == "pipeName-clientStatus")
                 {
                     stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/statusPipe").Value;
                 }
+
 
                 //Look for the log file path
                 else if (elementToLocate == "logFilePath")
                 {
 
                     stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/filePaths/logFile").Value;
+                }
+
+
+                //Look for the filepath of the ASCII art used for the servers title/UI
+                else if(elementToLocate == "serverUI")
+                {
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/filePaths/serverUI").Value;
                 }
 
 

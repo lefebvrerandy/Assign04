@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 namespace Server
 {
 
@@ -39,5 +40,24 @@ namespace Server
             return encodedString;
 
         }//GetClientInput
+
+
+        /*  
+        *  METHOD        : SetConsoleAttributes
+        *  DESCRIPTION   : This method is used to set the console windows attributes once the program starts up.
+        *                  It sets the text/background colour, and window dimensions
+        *  PARAMETERS    : void : The method takes no arguments
+        *  RETURNS       : void : The method has no return
+        */
+        public void SetConsoleAttributes()
+        {
+
+            Console.Title = "PROG 2120 - A04 Server";
+            Console.WindowWidth = 139;          //Set the window width to 139 units
+            Console.WindowHeight = 37;          //Set the windows height to 37 lines
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+
+        }//SetConsoleAttributes
     }
 }

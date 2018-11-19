@@ -61,9 +61,7 @@
     <Compile Include="FileManager.cs" />
     <Compile Include="Server_Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerHarness.cs" />
     <Compile Include="ServerPipes.cs" />
-    <Compile Include="StreamManager.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="constants.xml" />
+    <Content Include="serverConsoleUI.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

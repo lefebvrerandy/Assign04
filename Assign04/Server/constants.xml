@@ -17,6 +17,7 @@
 		</networking>
 		<filePaths>
 			<logFile>EventLog.txt</logFile>
+      <serverUI>../../serverConsoleUI.txt</serverUI>
 		</filePaths>
 	</constants>
 </root>

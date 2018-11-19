@@ -2,16 +2,15 @@
 *  FILE          : App.xaml.cs
 *  PROJECT       : PROG 2120 - Assignment 4
 *  PROGRAMMER    : Bence Karner & Randy Lefebvre
-*  DESCRIPTION   : DEBUG
-*				   
+*  DESCRIPTION   : This file contains the the starting point of the client applications. The program 
+*                  creates a file, and logs the start of the client application, before opening into the login window, and 
+*				   starting the chat applciation.
 *
 * References: The source code, and C# image found in the About window were retrieved from the following sources,
-* Bakalenyik, M. (ND). C#: Static vs Non-Static Classes and Static vs Instance Methods. Retrieved on Oct 5, 2018, from
-* https://hackernoon.com/c-static-vs-instance-classes-and-methods-50fe8987b231 
+*   Bakalenyik, M. (ND). C#: Static vs Non-Static Classes and Static vs Instance Methods. Retrieved on Oct 5, 2018, from
+*   https://hackernoon.com/c-static-vs-instance-classes-and-methods-50fe8987b231 
 *
 */
-
-
 
 
 
@@ -53,14 +52,6 @@ namespace Client
 
             //Begin the chat application
             applicationMain.Run();
-
-
-            //Open pipe used to signal to the server that the client is stil alive and functioning
-            ClientStreamPipe pipeManager = new ClientStreamPipe();
-            //string pipeName = fileManager.ReadXMLDocument("pipeName-clientStatus");     DEBUG ADD BEFORE SUBMISSION
-            //object outgoingStatusPipe = pipeManager.OpenOutgoingPipe(pipeName);
-            //Join the remaining threads, and exit the application
-            //DEBUG DELETE THESE BEFORE SUBMISSION
         }
     }//class
 }//namespace
