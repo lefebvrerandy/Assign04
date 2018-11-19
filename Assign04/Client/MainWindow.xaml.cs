@@ -63,7 +63,7 @@ namespace Client
                 Application.Current.Shutdown();
             }
 
-            //Create a thread for managing  incoming messages, and printing to the output textbox
+            //Create a thread for managing incoming messages, and printing to the output textbox
             Thread incomingMessageManager = new Thread(ThreadedListener);
             incomingMessageManager.Name = "ThreadedListener";
             incomingMessageManager.Start();
@@ -104,7 +104,7 @@ namespace Client
             while (User.ClientID != null)
             {
 
-                //Read the incoming data from the steam, format the message, and add it to the output window
+                //Read the incoming data from the stream, format the message, and add it to the output window
                 string formattedMessage = inputStream.ReadLine();
                 formattedMessage = messageFormatter.BuildDisplayString(formattedMessage);
                 OutputTextBox.Text = OutputTextBox.Text + Environment.NewLine + formattedMessage;

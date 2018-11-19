@@ -196,14 +196,14 @@ namespace Server
                 //Look for the pipe name element
                 if (elementToLocate == "pipeName-incoming")
                 {
-                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/incomingPipe").Value;
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/incomingPipe").Value;     //Returns serverIn
                 }
 
 
                 
                 else if (elementToLocate == "pipeName-outgoing")
                 {
-                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/outgoingPipe").Value;
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/outgoingPipe").Value;     //Returns serverOut
                 }
 
 

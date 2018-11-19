@@ -14,7 +14,7 @@ namespace Server
 
         //  METHOD        : OpenOutPipe()
         //  DESCRIPTION   : 
-        //  PARAMETERS    : string pipeName
+        //  PARAMETERS    : string pipeName :
         //  RETURNS       : NamedPipeServerStream ServerOutPipe
         //
         public NamedPipeServerStream OpenOutPipe(string pipeName)
@@ -23,7 +23,7 @@ namespace Server
             NamedPipeServerStream ServerOutPipe = null;
             try
             {
-                ServerOutPipe = new NamedPipeServerStream(pipeName, PipeDirection.Out);
+                ServerOutPipe = new NamedPipeServerStream(pipeName, PipeDirection.Out, 100);
                 ServerOutPipe.WaitForConnection();
             }
 
@@ -49,7 +49,7 @@ namespace Server
             NamedPipeServerStream ServerInPipe = null;
             try
             {
-                ServerInPipe = new NamedPipeServerStream(pipeName, PipeDirection.In);
+                ServerInPipe = new NamedPipeServerStream(pipeName, PipeDirection.In, 100);
                 ServerInPipe.WaitForConnection();
             }
 

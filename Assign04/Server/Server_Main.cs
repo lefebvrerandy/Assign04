@@ -42,10 +42,11 @@ namespace Server
 
 
             //Thead the server, and go into a wait loop
-            Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
-            ServerPipeLoop.Name = "ServerPipeLoopThread";
-            ServerPipeLoop.Start();
+            //Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
+            //ServerPipeLoop.Name = "ServerPipeLoopThread";
+            //ServerPipeLoop.Start();
 
+            ServerAcceptLoopThread();
 
             //Wait with the main thread until all child threads have returned
             while (true)
@@ -68,36 +69,40 @@ namespace Server
         private static void ServerAcceptLoopThread()
         {
 
-            //Define the pipe names
-            string incomingPipeName = "serverIn";
-            string outgoingPipename = "serverOut";
-            ServerPipes openPipes = new ServerPipes();
-            int initalClientConnection = 1;
+            //DEBUG
+            int messageCounter = 0;
+            Dictionary<int, string> messageList = new Dictionary<int, string>();
 
+
+            FileIO fileManager = new FileIO();
+            string incomingPipeName = fileManager.ReadXMLDocument("pipeName-incoming");      //string indicator of the element to search in the XML doc
+            string outgoingPipename = fileManager.ReadXMLDocument("pipeName-outgoing");      //string indicator of the element to search in the XML doc
+            ServerPipes openPipes = new ServerPipes();
 
 
             /*  Use the var  initalClientConnection to allow the thread to enter the main connection loop 
              *  ONLY one the first cycle before a client has connected. For all other subsequent iterations 
              *  of the loop keep cycling until all clients have shutdown, or logged off */
+            int initalClientConnection = 1;
             while ((initalClientConnection == 1) || (openPipes.ClientCounter > 0))
             {
 
 
                 Console.WriteLine("Waiting for connections...");
-                NamedPipeServerStream pipe_in = openPipes.OpenInPipe(incomingPipeName);
-                NamedPipeServerStream pipe_out = openPipes.OpenOutPipe(outgoingPipename);
+                NamedPipeServerStream pipe_in = openPipes.OpenInPipe("serverIn");
+                NamedPipeServerStream pipe_out = openPipes.OpenOutPipe("serverOut");
 
 
                 // Start a new thread, Send the pipe_in pipe to the new thread
-                Thread RecieveFromClients = new Thread(RecieveFromAllClients);
+                Thread RecieveFromClients = new Thread(() => RecieveFromAllClients(pipe_in, ref messageList, ref messageCounter));
                 RecieveFromClients.Name = "RecieveMessageThread";
-                RecieveFromClients.Start(pipe_in);
+                RecieveFromClients.Start();
 
 
-                // Start a new thread, Send the pipe_out pipe to the new thread
-                Thread SendToClients = new Thread(SendToAllClients);
+                //Start a new thread, Send the pipe_out pipe to the new thread
+                Thread SendToClients = new Thread(() =>  SendToAllClients(pipe_out, ref messageList, ref messageCounter));
                 SendToClients.Name = "SendMessageThread";
-                SendToClients.Start(pipe_out);
+                SendToClients.Start();
 
 
                 //Increment the client counter so the server knows when to return
@@ -117,7 +122,7 @@ namespace Server
         *  cast to a pipe, and used to recieve incoming messages
         *  RETURNS       : void : The methods has no return
         */
-        private static void RecieveFromAllClients(object data)
+        private static void RecieveFromAllClients(object data, ref Dictionary<int, string> messageList, ref int messageCounter)
         {
 
             //Cast the object as a pipe
@@ -132,9 +137,8 @@ namespace Server
                 //Open an stream to the pipe taking incoming messages, and write the message to the string         
                 StreamReader readFromPipe = new StreamReader(Client_IN);
                 string incomingMessage = readFromPipe.ReadLine();
-                DataRepository.AddMessageToRepository(incomingMessage);
-
-
+                messageCounter++;
+                messageList.Add(messageCounter, incomingMessage);
             }
 
         }//RecieveFromAllClients
@@ -146,7 +150,7 @@ namespace Server
         *  PARAMETERS    : void : The method takes no arguments
         *  RETURNS       : void : The methods has no return
         */
-        private static void SendToAllClients(object data)
+        private static void SendToAllClients(object data, ref Dictionary<int, string> messageList, ref int messageCounter)
         {
 
             //Cast the object as a 
@@ -160,14 +164,8 @@ namespace Server
 
 
 
-            //Grab a reference to the dictionary in the DataRepository class
-            Dictionary<int, string> refToMessageRepository = new Dictionary<int, string>();
-            refToMessageRepository = DataRepository.MessageRepository;
-
-
-
             //Save the current message count in the ditctionary
-            int currentMessageCount = DataRepository.MessageCounter;
+            int currentMessageCount = messageCounter;
 
 
 
@@ -177,14 +175,13 @@ namespace Server
             while (clientDisconnectCommand == false)
             {
 
-                Thread.Sleep(100);
-                if (DataRepository.MessageCounter > currentMessageCount)
+                Thread.Sleep(1000);
+                if (messageCounter > currentMessageCount)
                 {
-                    Thread.Sleep(100);
                     //A new message has been added to the reppsotory since the last check
                     //Grab the message associate with the current counter, and send it out to the client
                     string outgoingClientMessage = string.Empty;
-                    refToMessageRepository.TryGetValue(currentMessageCount, out outgoingClientMessage);
+                    messageList.TryGetValue(currentMessageCount, out outgoingClientMessage);
                     outputStream.WriteLine(outgoingClientMessage);
 
 
