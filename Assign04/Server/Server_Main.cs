@@ -10,6 +10,8 @@ namespace Server
 {
     public class Server_Main
     {
+
+
         private static int numThreads = 3;
 
         string pipename = "test";
@@ -17,6 +19,16 @@ namespace Server
 
         public static void Main()
         {
+
+            //Open create a file used for logging errors, and log the application start time
+            FileIO fileManager = new FileIO();
+            string filepath = fileManager.ReadXMLDocument("logFilePath");
+            fileManager.CreateFile(filepath);
+            Logger.LogApplicationEvents(filepath, "SERVER START");
+
+
+
+
             int i;
             
             Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
@@ -40,8 +52,10 @@ namespace Server
             //  From there the method will spawn a new thread for each
             while (true)
             {
-                NamedPipeServerStream pipe_in = OpenInPipe(pipename);
-                NamedPipeServerStream pipe_out = OpenOutPipe(pipename);
+
+                ServerPipes openPipes = new ServerPipes();
+                NamedPipeServerStream pipe_in = openPipes.OpenInPipe(pipename);
+                NamedPipeServerStream pipe_out = openPipes.OpenOutPipe(pipename);
 
 
                 // Start a new thread, Send the pipe_in pipe to the new thread

@@ -66,7 +66,7 @@ public class PipeClient
     }
 }
 
-}
+
 // Defines the data protocol for reading and writing strings on our stream
 public class StreamString
 {
