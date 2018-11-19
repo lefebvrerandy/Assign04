@@ -119,7 +119,7 @@ namespace Server
                     //A new message has been added to the rep since the last check
                     //Grab the message associate with the current counter, and send it out to the client
                     string outgoingClientMessage = string.Empty;
-                    refToMessageRepository.TryGetValue(currentMessageCount + 1, out outgoingClientMessage);
+                    refToMessageRepository.TryGetValue(currentMessageCount, out outgoingClientMessage);
                     outputStream.WriteLine(outgoingClientMessage);
 
 
