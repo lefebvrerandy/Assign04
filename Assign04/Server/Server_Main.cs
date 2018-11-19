@@ -17,45 +17,49 @@ namespace Server
         string pipename = "test";
         NamedPipeServerStream pipeServer = null;
 
+
         public static void Main()
         {
 
-            //Open create a file used for logging errors, and log the application start time
+            //Grab the filepath for the event logger, and log the server start time
             FileIO fileManager = new FileIO();
             string filepath = fileManager.ReadXMLDocument("logFilePath");
             fileManager.CreateFile(filepath);
             Logger.LogApplicationEvents(filepath, "SERVER START");
 
 
-
-
             int i;
             
-            Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
-            //Thread Server;
-            ServerPipeLoop.Start();
 
+            //Thead the server, and go into a wait loop
+            Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
+            ServerPipeLoop.Name = "ServerPipeLoopThread";
+            ServerPipeLoop.Start();
             while (true)
             {
                 Thread.Sleep(1000);
             }
 
+
         }
 
         private static void ServerAcceptLoopThread(object data)
         {
-            // Pipe name
-            string pipename = "test";
+
+            //Define the pipe names
+            string incomingPipeName = "serverIn";
+            string outgoingPipename = "serverOut";
+
 
             // This is an endless loop. This loop will 
-            // Open two pipes per client, one being the IN pipe, other being the OUT pipe
+            // open two pipes per client, one being the IN pipe, other being the OUT pipe
             //  From there the method will spawn a new thread for each
             while (true)
             {
 
                 ServerPipes openPipes = new ServerPipes();
-                NamedPipeServerStream pipe_in = openPipes.OpenInPipe(pipename);
-                NamedPipeServerStream pipe_out = openPipes.OpenOutPipe(pipename);
+                NamedPipeServerStream pipe_in = openPipes.OpenInPipe(incomingPipeName);
+                NamedPipeServerStream pipe_out = openPipes.OpenOutPipe(outgoingPipename);
 
 
                 // Start a new thread, Send the pipe_in pipe to the new thread
@@ -65,8 +69,11 @@ namespace Server
                 // Start a new thread, Send the pipe_out pipe to the new thread
                 Thread SendToClients = new Thread(SendToAllClients);
                 SendToClients.Start(pipe_out);
+
+                openPipes.ClientCounter++;
             }
         }
+
         private static void RecieveFromAllClients(object data)
         {
             // Cast the object as the proper datatype
@@ -83,6 +90,8 @@ namespace Server
             // Cast the object as the proper datatype
             NamedPipeServerStream Client_OUT = null;
             Client_OUT = (NamedPipeServerStream)data;
+
+
 
             // This is where we will recieve the information from the client, and send it to the
             //  OUT stream for each client.
