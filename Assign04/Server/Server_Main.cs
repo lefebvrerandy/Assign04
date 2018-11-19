@@ -140,7 +140,7 @@ namespace Server
                 messageCounter++;
                 messageList.Add(messageCounter, incomingMessage);
             }
-
+            Thread.Sleep(100);
         }//RecieveFromAllClients
 
 
@@ -189,7 +189,7 @@ namespace Server
                     currentMessageCount++;
                 }
             }
-
+            Thread.Sleep(100);
         }//SendToAllClients
     }//class
 }//namepsace
