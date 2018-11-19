@@ -3,7 +3,7 @@ using System.IO;
 using System.IO.Pipes;
 using System.Text;
 using System.Threading;
-
+using System.Collections.Generic;
 
 
 namespace Server
@@ -14,8 +14,8 @@ namespace Server
 
         private static int numThreads = 3;
 
-        string pipename = "test";
-        NamedPipeServerStream pipeServer = null;
+        //string pipename = "test";
+        //NamedPipeServerStream pipeServer = null;
 
 
         public static void Main()
@@ -76,11 +76,15 @@ namespace Server
 
         private static void RecieveFromAllClients(object data)
         {
-            // Cast the object as the proper datatype
+
+            //Cast the object as the proper datatype
             NamedPipeServerStream Client_IN = null;
             Client_IN = (NamedPipeServerStream)data;
 
-
+            //Open an stream to the pipe taking incoming messages, and write the message to the string
+            StreamReader readFromPipe = new StreamReader(Client_IN);
+            string incomingMessage = Console.ReadLine();                //Readline will block the thread until the client sends a message
+            DataRepository.AddMessageToRepository(incomingMessage);
 
 
         }
@@ -92,9 +96,37 @@ namespace Server
             Client_OUT = (NamedPipeServerStream)data;
 
 
+            //Open a new stream to the outgoing pipe
+            StreamWriter outputStream = new StreamWriter(Client_OUT);
 
-            // This is where we will recieve the information from the client, and send it to the
-            //  OUT stream for each client.
+
+            //Grab a reference to the dictionary in the DataRepository class
+            Dictionary<int, string> refToMessageRepository = new Dictionary<int, string>();
+            refToMessageRepository = DataRepository.MessageRepository;
+
+
+            //Save the current message count in the ditctionary
+            int currentMessageCount = DataRepository.MessageCounter;
+
+
+            //Keep cycling looking for new messages in the dictionary
+            //For every message thats added the messageRepository, the thread managing incoming messages will increment the counter
+            while (true)
+            {
+                if (DataRepository.MessageCounter > currentMessageCount)
+                {
+
+                    //A new message has been added to the rep since the last check
+                    //Grab the message associate with the current counter, and send it out to the client
+                    string outgoingClientMessage = string.Empty;
+                    refToMessageRepository.TryGetValue(currentMessageCount + 1, out outgoingClientMessage);
+                    outputStream.WriteLine(outgoingClientMessage);
+
+
+                    //Increment the message counter and cycle back to check again for a new message
+                    currentMessageCount++;
+                }
+            }
 
         }
 
