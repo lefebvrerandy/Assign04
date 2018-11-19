@@ -136,7 +136,7 @@ namespace Server
 
 
             }
-
+            Thread.Sleep(100);
         }//RecieveFromAllClients
 
 
@@ -192,7 +192,7 @@ namespace Server
                     currentMessageCount++;
                 }
             }
-
+            Thread.Sleep(100);
         }//SendToAllClients
     }//class
 }//namepsace

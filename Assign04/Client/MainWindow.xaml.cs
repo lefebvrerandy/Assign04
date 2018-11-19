@@ -108,6 +108,7 @@ namespace Client
                 string formattedMessage = inputStream.ReadLine();
                 formattedMessage = messageFormatter.BuildDisplayString(formattedMessage);
                 OutputTextBox.Text = OutputTextBox.Text + Environment.NewLine + formattedMessage;
+                Thread.Sleep(100);
             }
         }
 
@@ -150,6 +151,7 @@ namespace Client
                     User.Command = null;
                     User.Message = null;
                 }
+                Thread.Sleep(100);
             }
         }
 
@@ -257,9 +259,24 @@ namespace Client
                 Utility generatedString = new Utility();
                 Thread.Sleep(generatedString.AutomateGenerateSleep());                  // Generate the sleep timer
                 string stringRnd = generatedString.AutomateGenerateString(); // Generate the random string
-                int cursorPosition = InputTextBox.SelectionStart;
-                InputTextBox.SelectedText = stringRnd;              // Put the contents into the textbox
-                
+                //InputTextBox.SelectedText = stringRnd;              // Put the contents into the textbox
+
+
+                //Open the necessary connections for writing to the server
+                ClientStreamPipe pipeManager = new ClientStreamPipe();
+
+                FileIO fileManager = new FileIO();
+                string pipeName = fileManager.ReadXMLDocument("pipeName-outgoing");      //string indicator of the element to search in the XML doc
+                NamedPipeClientStream outgoingMessagePipe = pipeManager.OpenOutgoingPipe(pipeName);
+                StreamWriter outputStream = new StreamWriter(outgoingMessagePipe);
+
+                User.Message = stringRnd;
+                string outboundMessage = generatedString.ASCIIEncodeMessage(User.Message);
+                outboundMessage = generatedString.BuildOutboundString(User.ClientID, User.Command, User.Message);
+                outputStream.WriteLine(outboundMessage);
+                outputStream.Flush();
+
+                User.Message = null;
             } 
 
 

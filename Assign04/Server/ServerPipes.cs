@@ -23,7 +23,8 @@ namespace Server
             NamedPipeServerStream ServerOutPipe = null;
             try
             {
-                ServerOutPipe = new NamedPipeServerStream(pipeName, PipeDirection.Out);
+                ServerOutPipe = new NamedPipeServerStream(pipeName, PipeDirection.Out, NamedPipeServerStream.MaxAllowedServerInstances);
+                //ServerOutPipe = new NamedPipeServerStream(pipeName, PipeDirection.Out);
                 ServerOutPipe.WaitForConnection();
             }
 
@@ -49,7 +50,8 @@ namespace Server
             NamedPipeServerStream ServerInPipe = null;
             try
             {
-                ServerInPipe = new NamedPipeServerStream(pipeName, PipeDirection.In);
+                ServerInPipe = new NamedPipeServerStream(pipeName, PipeDirection.In, NamedPipeServerStream.MaxAllowedServerInstances);
+                //ServerInPipe = new NamedPipeServerStream(pipeName, PipeDirection.In);
                 ServerInPipe.WaitForConnection();
             }
 
