@@ -295,7 +295,7 @@ namespace Client
         {
             //Generate random string
             Utility generatedString = new Utility();
-            while (true)
+            for (int i = 0; i < 50; i++)
             {
                 var tokenSource2 = new CancellationTokenSource();
                 CancellationToken ct = tokenSource2.Token;
@@ -306,6 +306,11 @@ namespace Client
                     InputTextBox.SelectedText = stringRnd;
                 }));
             }
+            this.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                    Automate.IsChecked = false;
+            }));
+
 
         }
 
