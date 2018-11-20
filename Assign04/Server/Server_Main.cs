@@ -179,14 +179,16 @@ namespace Server
                         //Increment the message counter and cycle back to check again for a new message
                         currentMessageCount++;
                     }
-                    catch (Exception e)
+                    catch (Exception errorMessage)
                     {
                         clientDisconnectCommand = true;
+
+
+                        //Log the errorbefore returning up the calling stack
+                        FileIO fileManager = new FileIO();
+                        string filepath = fileManager.ReadXMLDocument("logFilePath");
+                        Logger.LogApplicationEvents(filepath, errorMessage.ToString());
                     }
-
-
-
-
                 }
             Thread.Sleep(100);
            } 
