@@ -1,4 +1,10 @@
-﻿<Application x:Class="Client.App"
+﻿<!--
+    FILE          : App.xaml
+    PROJECT       : PROG 2120 - Assignment 4
+    PROGRAMMER    : Bence Karner & Randy Lefebvre
+    DESCRIPTION   : This file contains all the XAML source code required by the base application before launching the chat widnow
+-->
+<Application x:Class="Client.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Client"

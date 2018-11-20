@@ -18,7 +18,9 @@ namespace Client
 
     /* 
     *   NAME    : UIController
-    *   PURPOSE :
+    *   PURPOSE : This class was designed as a light weight solution to printing messages to the main display outside of the chat application.
+    *   The class contains a single method used to print message boxes to the screen. It's primary purpose is to report errors caught in 
+    *   catch blocks
     */
     class UIController
     {

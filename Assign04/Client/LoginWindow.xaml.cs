@@ -1,4 +1,11 @@
-﻿
+﻿/* 
+*  FILE          : LoginWindow.xaml.cs
+*  PROJECT       : PROG 2120 - Assignment 4
+*  PROGRAMMER    : Bence Karner & Randy Lefebvre
+*  DESCRIPTION   : This file contains the code behind portion of the login window. This section is required during 
+*                  username processing before the chat window opens. The file contains the partial class for the Login Window
+*                  and an event for dealing with a button press
+*/
 
 
 
@@ -17,18 +24,22 @@ using System.Windows.Shapes;
 namespace Client
 {
 
-    /// <summary>
-    /// Interaction logic for LoginWindow.xaml
-    /// </summary>
+
+    /* 
+    *   NAME    : LoginWindow
+    *   PURPOSE : Represents the code behind portion of the LoginWindow.xaml file. The class contains 
+    *             a constructor for printing the users instructions, and an event to process(validate) their
+    *             userName 
+    */
     public partial class LoginWindow : Window
     {
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : LoginWindow
+        *  DESCRIPTION   : Constructor for the login window 
+        *  PARAMETERS    : void : constuctor takes no arguments
+        *  RETURNS       : void : constuctor has no return
         */
         public LoginWindow()
         {
@@ -39,10 +50,15 @@ namespace Client
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : LoginOKButtonClick
+        *  DESCRIPTION   : The method is used to deal with the button click event
+        *   once the user has entered their userName. The event triggers the validation methods 
+        *   that will check the userName length, and char usage. If there are no errors, then
+        *   a true is returned
+        *  PARAMETERS    : Parameters are as follows
+        *   object sender : The object from which the event was triggered
+        *   RoutedEventArgs e : Event specific data
+        *  RETURNS       : void : The method has no return value
         */
         private void LoginOKButtonClick(object sender, RoutedEventArgs e)
         {

@@ -26,10 +26,11 @@ namespace Client
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : StringSplitter
+        *  DESCRIPTION   : This method is used to split the alrger string delimited by the new line char, and return the sub strings
+        *   as part of an array
+        *  PARAMETERS    : string stringToSplit : string that will be split by the delimiter ('\n')
+        *  RETURNS       : string [] : String array containing the individual strings from the larger parent string
         */
         public static string[] StringSplitter (string stringToSplit)
         {
@@ -38,13 +39,17 @@ namespace Client
             string[] returnStringArray = new string[] { };
             returnStringArray = stringToSplit.Split('\n');
             return returnStringArray;
-        }
+        }//StringSplitter
+
 
         /*  
-        *  METHOD        : 
+        *  METHOD        : BuildOutboundString
         *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  PARAMETERS    : Parameters are as follows
+        *  string userName: String containing the users userName
+        *  string command: String containing the client command identifier
+        *  string outboundMessage: String containing the actual message typed into the client message window
+        *  RETURNS       : string : Return string with each of the argument strings stiched together
         */
         public string BuildOutboundString(string userName, string command, string outboundMessage)
         {
@@ -56,10 +61,11 @@ namespace Client
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : BuildDisplayString
+        *  DESCRIPTION   : Used to prepend a time stamp to the incoming string
+        *  PARAMETERS    : string messageFromServer : String that will ahve the DateTime prepended to it
+        *  RETURNS       : string : Returns the completed string with the time stamp appended
+        *   to the begining of the argument string
         */
         public string BuildDisplayString(string messageFromServer)
         {
@@ -73,12 +79,12 @@ namespace Client
         }//BuildClientOutboundString
 
 
-
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : CheckUserNameLength
+        *  DESCRIPTION   : This method is used to check the length of the clients userName. If its
+        *   above 0 and below 17 chars in length, then its valid
+        *  PARAMETERS    : string stringToCheck : 
+        *  RETURNS       : bool : Returns true if the username is less than 17 chars and above 0
         */
         public bool CheckUserNameLength(string stringToCheck)
         {
@@ -95,12 +101,12 @@ namespace Client
         }//CheckUserNameLength
 
 
-
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : CheckCharactersInString
+        *  DESCRIPTION   : Used to check the characters in the parameter string. if chars outside the range of 
+        *   32 - 126 are detected, then the entire string is considerd invalid
+        *  PARAMETERS    : string stringToCheck: The string that will be checked
+        *  RETURNS       : bool : Returns true if the string contains only valid characters
         */
         public bool CheckCharactersInString (string stringToCheck)
         {
@@ -133,13 +139,11 @@ namespace Client
         }//CheckCharactersInString
 
 
-
-
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : ASCIIEncodeMessage
+        *  DESCRIPTION   : This method is used to encode the clients message to ASCII from the assumed UTF-8/16
+        *  PARAMETERS    : string outboundString : The outbound string that will be converted to ASCII encoding
+        *  RETURNS       : string : ASCII encoded string
         */
         public string ASCIIEncodeMessage(string outboundString)
         {
@@ -184,18 +188,14 @@ namespace Client
         }//GetClientInput
 
 
-
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : AutomateGenerateString
+        *  DESCRIPTION   : This method is used to randomly select a string from the list below
+        *  PARAMETERS    : void : The method takes no arguments
+        *  RETURNS       : string : The randomly selected string
         */
-        public string AutomateGenerateString(/*string userName*/)
+        public string AutomateGenerateString()
         {
-            // Random a name,
-            //string user_name = userName;
-            //string command = "1";
             string message = string.Empty;
             string GeneratedString = string.Empty;
             string[] randomString = new string[] 
@@ -220,19 +220,18 @@ namespace Client
             GeneratedString = randomString[randomIndex] + "";     // Set up the generated string and add the newline character at the end'\n'
 
             return GeneratedString;
+
         }//AutomateGenerateString
 
 
-
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : AutomateGenerateSleep
+        *  DESCRIPTION   : This methos is used to generate a random sleep time
+        *  PARAMETERS    : void : The method takes no arguments
+        *  RETURNS       : int : Random sleep time
         */
         public int AutomateGenerateSleep()
         {
-            //
             Random rnd = new Random();
             int randomSleep = rnd.Next(100, 1000);
 

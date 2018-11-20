@@ -1,4 +1,11 @@
-﻿<Window x:Class="Client.LoginWindow"
+﻿<!--
+    FILE          : LoginWindow.xaml
+    PROJECT       : PROG 2120 - Assignment 4
+    PROGRAMMER    : Bence Karner & Randy Lefebvre
+    DESCRIPTION   : This file contains all the XAML source code required for structuring the login window, as part fo the main application.
+-->
+    
+    <Window x:Class="Client.LoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"

@@ -2,7 +2,8 @@
 *  FILE          : NetworkManager.cs
 *  PROJECT       : PROG 2120 - Assignment 4
 *  PROGRAMMER    : Bence Karner & Randy Lefebvre
-*  DESCRIPTION   : This file contains the DEBUG
+*  DESCRIPTION   : This file contains the the networking methods required to connect to the named pipes opened by the server. 
+*                  The class contains two methods, one for connecting to incoming pipe, and another for connecting to an out facing pipe. 
 */
 
 
@@ -18,16 +19,17 @@ namespace Client
 
     /* 
     *   NAME    : ClientStreamPipe
-    *   PURPOSE :
+    *   PURPOSE : This class was designed to act as a network manager for connected pipes. Two methods are included for connecting to an open incoming 
+    *             and outgoing pipe hosted by the server. 
     */
     public class ClientStreamPipe
     {
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
+        *  METHOD        : OpenOutgoingPipe
+        *  DESCRIPTION   : Used to connect to a pipe with data flowing OUTwards from the client
+        *  PARAMETERS    : string pipeName : String containing the pipe name used during connection attempts
         *  RETURNS       : NamedPipeClientStream : A reference to the connected pipe that was just opened
         */
         public NamedPipeClientStream OpenOutgoingPipe(string pipeName)
@@ -69,10 +71,10 @@ namespace Client
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : NamedPipeClientStream :
+        *  METHOD        : OpenIncomingPipe
+        *  DESCRIPTION   : Used to connect to a pipe with data flowing INwards to the client
+        *  PARAMETERS    : string pipeName : String containing the pipe name used during connection attempts
+        *  RETURNS       : NamedPipeClientStream : A reference to the connected pipe that was just opened
         */
         public NamedPipeClientStream OpenIncomingPipe(string pipeName)
         {
@@ -108,23 +110,6 @@ namespace Client
 
             return establishedClientPipe;
         }
-
-
-        /*  
-        *  METHOD        : CheckForExitCondition
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : bool : 
-        */
-        public bool CheckForExitCondition(string incomingMessage)
-        {
-            bool isExitConfirmed = false;
-
-
-
-            return isExitConfirmed;
-        }
-
     }//class
 }//namespace
 
