@@ -109,7 +109,7 @@ namespace Client
 
                 //Read the incoming data from the stream, format the message, and add it to the output window
                 string formattedMessage = inputStream.ReadLine();
-                if (formattedMessage != "")
+                if ((formattedMessage != "") && (formattedMessage != null) && (formattedMessage != " "))
                 {
                     formattedMessage = messageFormatter.BuildDisplayString(formattedMessage);
                     this.Dispatcher.BeginInvoke(new Action(() =>
@@ -121,6 +121,8 @@ namespace Client
 
                 Thread.Sleep(100);
             }
+
+            incomingMessagePipe.Close();
         }
 
 
@@ -166,6 +168,8 @@ namespace Client
                 }
                 Thread.Sleep(100);
             }
+
+            outgoingMessagePipe.Close();
         }
 
 
@@ -274,12 +278,6 @@ namespace Client
                 tokenSource2.Cancel();
                 tokenSource2.Dispose();
             }
-
-
-
-
-
-
         }//Automate_Messages
 
 
@@ -327,6 +325,7 @@ namespace Client
         private void MenuExitClick(object menuUIEvent, RoutedEventArgs eventTrigger)
         {
             User.Command = "-1";                //clientCommand of -1 means clientShutdown; informs the server to remove the pipes used by the client
+            Thread.Sleep(250);                  //Sleep for a quarter of a second allowing the other threads to close their pipes and return          
             Application.Current.Shutdown();     //Close the application
 
         }//MenuExitClick
