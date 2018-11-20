@@ -139,8 +139,9 @@ namespace Server
                 string incomingMessage = readFromPipe.ReadLine();
                 messageCounter++;
                 messageList.Add(messageCounter, incomingMessage);
+                Thread.Sleep(100);
             }
-            Thread.Sleep(100);
+
         }//RecieveFromAllClients
 
 
@@ -188,8 +189,9 @@ namespace Server
                     //Increment the message counter and cycle back to check again for a new message
                     currentMessageCount++;
                 }
-           } 
             Thread.Sleep(100);
+           } 
+
         }//SendToAllClients
     }//class
 }//namepsace

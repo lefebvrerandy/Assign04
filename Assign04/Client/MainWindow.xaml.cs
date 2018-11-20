@@ -261,7 +261,7 @@ namespace Client
         private void Automate_Messages(object sender, RoutedEventArgs e)
         {
             bool flag = Automate.IsChecked;
-            if (Automate.IsEnabled)
+            while (Automate.IsEnabled)
             {
                 //Generate random string
                 Utility generatedString = new Utility();
