@@ -108,7 +108,7 @@ namespace Server
                 //Increment the client counter so the server knows when to return
                 openPipes.ClientCounter++;
                 initalClientConnection = 0;
-                Console.WriteLine("Client {0} connected...", openPipes.ClientCounter++);
+                Console.WriteLine("Client {0} connected...", openPipes.ClientCounter);
             }
         }
 
@@ -174,9 +174,7 @@ namespace Server
             bool clientDisconnectCommand = false;
             while (clientDisconnectCommand == false)
             {
-
-                Thread.Sleep(1000);
-                if (messageCounter > currentMessageCount)
+                if (messageCounter >= currentMessageCount)
                 {
                     //A new message has been added to the reppsotory since the last check
                     //Grab the message associate with the current counter, and send it out to the client
