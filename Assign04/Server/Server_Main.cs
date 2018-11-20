@@ -171,9 +171,10 @@ namespace Server
 
             //Keep cycling looking for new messages in the dictionary
             //For every message thats added the messageRepository, the thread managing incoming messages will increment the counter
-            bool clientDisconnectCommand = false;
-            while (clientDisconnectCommand == false)
-            {
+
+           bool clientDisconnectCommand = false;
+           while (clientDisconnectCommand == false)
+           {
                 if (messageCounter >= currentMessageCount)
                 {
                     //A new message has been added to the reppsotory since the last check
@@ -181,12 +182,13 @@ namespace Server
                     string outgoingClientMessage = string.Empty;
                     messageList.TryGetValue(currentMessageCount, out outgoingClientMessage);
                     outputStream.WriteLine(outgoingClientMessage);
+                    outputStream.Flush();
 
 
                     //Increment the message counter and cycle back to check again for a new message
                     currentMessageCount++;
                 }
-            }
+           } 
             Thread.Sleep(100);
         }//SendToAllClients
     }//class

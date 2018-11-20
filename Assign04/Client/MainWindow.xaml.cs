@@ -106,8 +106,16 @@ namespace Client
 
                 //Read the incoming data from the stream, format the message, and add it to the output window
                 string formattedMessage = inputStream.ReadLine();
-                formattedMessage = messageFormatter.BuildDisplayString(formattedMessage);
-                OutputTextBox.Text = OutputTextBox.Text + Environment.NewLine + formattedMessage;
+                if (formattedMessage != "")
+                {
+                    formattedMessage = messageFormatter.BuildDisplayString(formattedMessage);
+                    this.Dispatcher.BeginInvoke(new Action(() =>
+                    {
+                        OutputTextBox.Text = OutputTextBox.Text + Environment.NewLine + formattedMessage;
+                    }));
+
+                }
+
                 Thread.Sleep(100);
             }
         }
