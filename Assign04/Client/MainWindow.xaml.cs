@@ -83,10 +83,12 @@ namespace Client
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : ThreadedListener
+        *  DESCRIPTION   : This method is used to update the display window in the chat client. The
+        *  thread is distinct from the ThreadListener, and it only concerned with listening for incoming strings
+        *  from the INfacing pipe
+        *  PARAMETERS    : void : Method takes no arguments
+        *  RETURNS       : void : Method has no return value
         */
         public void ThreadedListener()
         {
@@ -125,10 +127,12 @@ namespace Client
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : ThreadedSender
+        *  DESCRIPTION   : This method is used to send the messaged to the server. 
+        *   It functions separately from the listener thread, and only focuses with taking the
+        *   saved messages from the User class, and pushing through the out pipe
+        *  PARAMETERS    : void : Method takes no arguments
+        *  RETURNS       : void : Method has no return value
         */
         public void ThreadedSender()
         {
@@ -253,12 +257,12 @@ namespace Client
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *   object menuUIEvent : 
-        *   RoutedEventArgs eventTrigger : 
-        *  RETURNS       : 
+        *  METHOD        : Automate_Messages
+        *  DESCRIPTION   : This method is used to automate the message sending  process from the client side
+        *  PARAMETERS    : Parameters are as follows
+        *   object sender : The UI element which triggered the event
+        *   RoutedEventArgs e : The event specific data
+        *  RETURNS       : void : The method has no return value
         */
         private void Automate_Messages(object sender, RoutedEventArgs e)
         {
@@ -280,10 +284,11 @@ namespace Client
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : AutomatePlease
+        *  DESCRIPTION   : This method is used to genreate a string 
+        *   for automated testing
+        *  PARAMETERS    : void : The method takes no arguments
+        *  RETURNS       : void : The method has no return value
         */
         private void AutomatePlease()
         {
@@ -416,9 +421,11 @@ namespace Client
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
+        *  METHOD        : UpdateCharCount
+        *  DESCRIPTION   : used to update the char counter on the lower status bar in the client window
+        *  PARAMETERS    : Paramters are as follows,
+        *  object sender: The obejct which raised the event
+        *  RoutedEventArgs e: The event specific data
         *  RETURNS       : 
         */
         private void UpdateCharCount(object sender, RoutedEventArgs e)
