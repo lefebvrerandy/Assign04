@@ -293,7 +293,8 @@ namespace Client
         {
             //Generate random string
             Utility generatedString = new Utility();
-            while (true)
+            int messageCount = 0;
+            while (messageCount < 50)
             {
                 Thread.Sleep(generatedString.AutomateGenerateSleep());                  // Generate the sleep timer
                 string stringRnd = generatedString.AutomateGenerateString(); // Generate the random string
@@ -301,7 +302,11 @@ namespace Client
                 {
                     InputTextBox.SelectedText = stringRnd;
                 }));
+
+                messageCount++;
             }
+
+
 
         }
 
