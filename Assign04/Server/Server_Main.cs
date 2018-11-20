@@ -37,10 +37,6 @@ namespace Server
             Logger.LogApplicationEvents(filepath, "SERVER START");
 
 
-            //Default the value of the message counter before a message is added
-            DataRepository.MessageCounter = 0;
-
-
             //Thead the server, and go into a wait loop
             //Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
             //ServerPipeLoop.Name = "ServerPipeLoopThread";

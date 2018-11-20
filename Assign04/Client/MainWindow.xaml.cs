@@ -28,6 +28,8 @@ using Microsoft.Win32;
 using System.Threading;
 using System.IO;
 using System.IO.Pipes;
+using System.Threading.Tasks;
+
 namespace Client
 {
 
@@ -267,29 +269,11 @@ namespace Client
                 Utility generatedString = new Utility();
                 Thread.Sleep(generatedString.AutomateGenerateSleep());                  // Generate the sleep timer
                 string stringRnd = generatedString.AutomateGenerateString(); // Generate the random string
-                //InputTextBox.SelectedText = stringRnd;              // Put the contents into the textbox
-
-
-                //Open the necessary connections for writing to the server
-                ClientStreamPipe pipeManager = new ClientStreamPipe();
-
-                FileIO fileManager = new FileIO();
-                string pipeName = fileManager.ReadXMLDocument("pipeName-outgoing");      //string indicator of the element to search in the XML doc
-                NamedPipeClientStream outgoingMessagePipe = pipeManager.OpenOutgoingPipe(pipeName);
-                StreamWriter outputStream = new StreamWriter(outgoingMessagePipe);
-
-                User.Message = stringRnd;
-                string outboundMessage = generatedString.ASCIIEncodeMessage(User.Message);
-                outboundMessage = generatedString.BuildOutboundString(User.ClientID, User.Command, User.Message);
-                outputStream.WriteLine(outboundMessage);
-                outputStream.Flush();
-
-                User.Message = null;
+                InputTextBox.SelectedText = stringRnd;              // Put the contents into the textbox
             } 
 
 
         }//Automate_Messages
-
 
 
 
@@ -384,6 +368,23 @@ namespace Client
                 UpdateCharCount(sender, e);
 
             }//textbox is in focus
+            else if (Automate.IsChecked)
+            {
+                if (InputTextBox.Text.Length <= 2000)
+                {
+
+                    //Dump the contents of the textbox into a string and scan for the newline char (signals a send command)
+                    string textboxContents = InputTextBox.Text;
+                    if (textboxContents.IndexOf("\n") > -1)
+                    {
+
+                        //Save the message, and clear the textbox
+                        User.Command = "1";                 //clientCommand of 1 marks the message as ordinary; informs the server to  redirect the message to all clients
+                        User.Message = textboxContents;
+                        InputTextBox.Text = "";
+                    }
+                }
+            }
         }//TextScanner
 
 

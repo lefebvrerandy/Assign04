@@ -217,7 +217,7 @@ namespace Client
             int randomIndex = rnd.Next(0, 9);
 
             //GeneratedString = BuildOutboundString(user_name, command, randomString[randomIndex]);
-            GeneratedString = randomString[randomIndex] + "";     // Set up the generated string and add the newline character at the end'\n'
+            GeneratedString = randomString[randomIndex] + '\n';     // Set up the generated string and add the newline character at the end
 
             return GeneratedString;
         }//AutomateGenerateString
