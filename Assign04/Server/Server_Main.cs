@@ -173,11 +173,20 @@ namespace Server
                     string outgoingClientMessage = string.Empty;
                     messageList.TryGetValue(currentMessageCount, out outgoingClientMessage);
                     outputStream.WriteLine(outgoingClientMessage);
-                    outputStream.Flush();
+                    try
+                    {
+                        outputStream.Flush();
+                        //Increment the message counter and cycle back to check again for a new message
+                        currentMessageCount++;
+                    }
+                    catch (Exception e)
+                    {
+                        clientDisconnectCommand = true;
+                    }
 
 
-                    //Increment the message counter and cycle back to check again for a new message
-                    currentMessageCount++;
+
+
                 }
             Thread.Sleep(100);
            } 

@@ -64,7 +64,7 @@
 
         <!-- Define the primary input/text areas -->
         <Label Margin="1" FontSize="10" Height="24" Content="Incoming Messages: "></Label>
-        <TextBox Name="OutputTextBox" Height="364" TextWrapping="Wrap"  IsReadOnly="True" Text=""/>
+        <TextBox Name="OutputTextBox" Height="364" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"  IsReadOnly="True" Text=""/>
         <Separator/>
         <Label Name="userNameLabel" Content="UserName: " Height="25"/>
         <Label Margin="0,0,0,0" FontSize="10" Height="24" Content="Outgoing Messages:"/>
