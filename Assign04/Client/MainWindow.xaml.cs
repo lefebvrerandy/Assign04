@@ -28,6 +28,8 @@ using Microsoft.Win32;
 using System.Threading;
 using System.IO;
 using System.IO.Pipes;
+using System.Threading.Tasks;
+
 namespace Client
 {
 
@@ -81,12 +83,10 @@ namespace Client
 
 
         /*  
-        *  METHOD        : ThreadedListener
-        *  DESCRIPTION   : This method is used to update the display window in the chat client. The
-        *  thread is distinct from the ThreadListener, and it only concerned with listening for incoming strings
-        *  from the INfacing pipe
-        *  PARAMETERS    : void : Method takes no arguments
-        *  RETURNS       : void : Method has no return value
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
         */
         public void ThreadedListener()
         {
@@ -120,17 +120,15 @@ namespace Client
 
                 Thread.Sleep(100);
             }
-        }//ThreadedListener
+        }
 
 
 
         /*  
-        *  METHOD        : ThreadedSender
-        *  DESCRIPTION   : This method is used to send the messaged to the server. 
-        *   It functions separately from the listener thread, and only focuses with taking the
-        *   saved messages from the User class, and pushing through the out pipe
-        *  PARAMETERS    : void : Method takes no arguments
-        *  RETURNS       : void : Method has no return value
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
         */
         public void ThreadedSender()
         {
@@ -165,7 +163,7 @@ namespace Client
                 }
                 Thread.Sleep(100);
             }
-        }//ThreadedSender
+        }
 
 
 
@@ -255,44 +253,27 @@ namespace Client
 
 
         /*  
-        *  METHOD        : Automate_Messages
-        *  DESCRIPTION   : This method is used to automate the message sending  process from the client side
-        *  PARAMETERS    : Parameters are as follows
-        *   object sender : The UI element which triggered the event
-        *   RoutedEventArgs e : The event specific data
-        *  RETURNS       : void : The method has no return value
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *   object menuUIEvent : 
+        *   RoutedEventArgs eventTrigger : 
+        *  RETURNS       : 
         */
         private void Automate_Messages(object sender, RoutedEventArgs e)
         {
             bool flag = Automate.IsChecked;
-            if (Automate.IsEnabled)
+            while (Automate.IsEnabled)
             {
                 //Generate random string
                 Utility generatedString = new Utility();
                 Thread.Sleep(generatedString.AutomateGenerateSleep());                  // Generate the sleep timer
-                string stringRnd = generatedString.AutomateGenerateString();            // Generate the random string
-
-
-                //Open the necessary connections for writing to the server
-                ClientStreamPipe pipeManager = new ClientStreamPipe();
-
-                FileIO fileManager = new FileIO();
-                string pipeName = fileManager.ReadXMLDocument("pipeName-outgoing");      //string indicator of the element to search in the XML doc
-                NamedPipeClientStream outgoingMessagePipe = pipeManager.OpenOutgoingPipe(pipeName);
-                StreamWriter outputStream = new StreamWriter(outgoingMessagePipe);
-
-                User.Message = stringRnd;
-                string outboundMessage = generatedString.ASCIIEncodeMessage(User.Message);
-                outboundMessage = generatedString.BuildOutboundString(User.ClientID, User.Command, User.Message);
-                outputStream.WriteLine(outboundMessage);
-                outputStream.Flush();
-
-                User.Message = null;
+                string stringRnd = generatedString.AutomateGenerateString(); // Generate the random string
+                InputTextBox.SelectedText = stringRnd;              // Put the contents into the textbox
             } 
 
 
         }//Automate_Messages
-
 
 
 
@@ -387,16 +368,31 @@ namespace Client
                 UpdateCharCount(sender, e);
 
             }//textbox is in focus
+            else if (Automate.IsChecked)
+            {
+                if (InputTextBox.Text.Length <= 2000)
+                {
+
+                    //Dump the contents of the textbox into a string and scan for the newline char (signals a send command)
+                    string textboxContents = InputTextBox.Text;
+                    if (textboxContents.IndexOf("\n") > -1)
+                    {
+
+                        //Save the message, and clear the textbox
+                        User.Command = "1";                 //clientCommand of 1 marks the message as ordinary; informs the server to  redirect the message to all clients
+                        User.Message = textboxContents;
+                        InputTextBox.Text = "";
+                    }
+                }
+            }
         }//TextScanner
 
 
 
         /*  
-        *  METHOD        : UpdateCharCount
-        *  DESCRIPTION   : used to update the char counter on the lower status bar in the client window
-        *  PARAMETERS    : Paramters are as follows,
-        *  object sender: The obejct which raised the event
-        *  RoutedEventArgs e: The event specific data
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
         *  RETURNS       : 
         */
         private void UpdateCharCount(object sender, RoutedEventArgs e)

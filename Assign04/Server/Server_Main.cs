@@ -36,7 +36,21 @@ namespace Server
             fileManager.CreateFile(filepath);
             Logger.LogApplicationEvents(filepath, "SERVER START");
 
+
+            //Thead the server, and go into a wait loop
+            //Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
+            //ServerPipeLoop.Name = "ServerPipeLoopThread";
+            //ServerPipeLoop.Start();
+
             ServerAcceptLoopThread();
+
+            //Wait with the main thread until all child threads have returned
+            while (true)
+            {
+                Thread.Sleep(1000);
+            }
+
+
         }
 
 
@@ -119,15 +133,11 @@ namespace Server
                 //Open an stream to the pipe taking incoming messages, and write the message to the string         
                 StreamReader readFromPipe = new StreamReader(Client_IN);
                 string incomingMessage = readFromPipe.ReadLine();
-
-
-                Console.WriteLine(incomingMessage);
-
-
                 messageCounter++;
                 messageList.Add(messageCounter, incomingMessage);
+                Thread.Sleep(100);
             }
-            Thread.Sleep(100);
+
         }//RecieveFromAllClients
 
 
@@ -158,9 +168,10 @@ namespace Server
 
             //Keep cycling looking for new messages in the dictionary
             //For every message thats added the messageRepository, the thread managing incoming messages will increment the counter
-            bool clientDisconnectCommand = false;
-            while (clientDisconnectCommand == false)
-            {
+
+           bool clientDisconnectCommand = false;
+           while (clientDisconnectCommand == false)
+           {
                 if (messageCounter >= currentMessageCount)
                 {
                     //A new message has been added to the reppsotory since the last check
@@ -170,11 +181,13 @@ namespace Server
                     outputStream.WriteLine(outgoingClientMessage);
                     outputStream.Flush();
 
+
                     //Increment the message counter and cycle back to check again for a new message
                     currentMessageCount++;
                 }
-            }
             Thread.Sleep(100);
+           } 
+
         }//SendToAllClients
     }//class
 }//namepsace
