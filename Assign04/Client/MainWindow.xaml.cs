@@ -304,7 +304,7 @@ namespace Client
                 this.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     InputTextBox.SelectedText = stringRnd;
-                }),System.Windows.Threading.DispatcherPriority.Normal, ct);
+                }));
             }
 
         }
