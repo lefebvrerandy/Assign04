@@ -263,17 +263,43 @@ namespace Client
         private void Automate_Messages(object sender, RoutedEventArgs e)
         {
             bool flag = Automate.IsChecked;
-            while (Automate.IsEnabled)
+            if (Automate.IsEnabled)
             {
-                //Generate random string
-                Utility generatedString = new Utility();
-                Thread.Sleep(generatedString.AutomateGenerateSleep());                  // Generate the sleep timer
-                string stringRnd = generatedString.AutomateGenerateString(); // Generate the random string
-                InputTextBox.SelectedText = stringRnd;              // Put the contents into the textbox
+                Task task1 = Task.Factory.StartNew(new Action(AutomatePlease));
+                //task1.Wait();
+                ////Generate random string
+                //Utility generatedString = new Utility();
+                //Thread.Sleep(generatedString.AutomateGenerateSleep());                  // Generate the sleep timer
+                //string stringRnd = generatedString.AutomateGenerateString(); // Generate the random string
+                //InputTextBox.SelectedText = stringRnd;              // Put the contents into the textbox
             } 
 
 
         }//Automate_Messages
+
+
+
+        /*  
+        *  METHOD        : 
+        *  DESCRIPTION   : 
+        *  PARAMETERS    : 
+        *  RETURNS       : 
+        */
+        private void AutomatePlease()
+        {
+            //Generate random string
+            Utility generatedString = new Utility();
+            while (true)
+            {
+                Thread.Sleep(generatedString.AutomateGenerateSleep());                  // Generate the sleep timer
+                string stringRnd = generatedString.AutomateGenerateString(); // Generate the random string
+                this.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    InputTextBox.SelectedText = stringRnd;
+                }));
+            }
+
+        }
 
 
 
