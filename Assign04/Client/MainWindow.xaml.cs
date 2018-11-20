@@ -263,16 +263,18 @@ namespace Client
         private void Automate_Messages(object sender, RoutedEventArgs e)
         {
             bool flag = Automate.IsChecked;
-            if (Automate.IsEnabled)
+            var tokenSource2 = new CancellationTokenSource();
+            CancellationToken ct = tokenSource2.Token;
+            Task task1 = Task.Factory.StartNew(new Action(AutomatePlease), ct);
+            if (flag == false)
             {
-                Task task1 = Task.Factory.StartNew(new Action(AutomatePlease));
-                //task1.Wait();
-                ////Generate random string
-                //Utility generatedString = new Utility();
-                //Thread.Sleep(generatedString.AutomateGenerateSleep());                  // Generate the sleep timer
-                //string stringRnd = generatedString.AutomateGenerateString(); // Generate the random string
-                //InputTextBox.SelectedText = stringRnd;              // Put the contents into the textbox
-            } 
+                tokenSource2.Cancel();
+                tokenSource2.Dispose();
+            }
+
+
+
+
 
 
         }//Automate_Messages
@@ -291,12 +293,14 @@ namespace Client
             Utility generatedString = new Utility();
             while (true)
             {
+                var tokenSource2 = new CancellationTokenSource();
+                CancellationToken ct = tokenSource2.Token;
                 Thread.Sleep(generatedString.AutomateGenerateSleep());                  // Generate the sleep timer
                 string stringRnd = generatedString.AutomateGenerateString(); // Generate the random string
                 this.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     InputTextBox.SelectedText = stringRnd;
-                }));
+                }),System.Windows.Threading.DispatcherPriority.Normal, ct);
             }
 
         }
