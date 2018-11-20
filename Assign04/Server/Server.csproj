@@ -56,7 +56,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataRepository.cs" />
     <Compile Include="EventLogger.cs" />
     <Compile Include="FileManager.cs" />
     <Compile Include="Server_Main.cs" />

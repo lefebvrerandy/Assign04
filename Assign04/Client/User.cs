@@ -23,5 +23,6 @@ namespace Client
         public static string ClientID {get; set;}       //
         public static string Command {get; set;}        //
         public static string Message {get; set;}        //
+        public static string incomingMessage { get; set; }
     }//class
 }//namepsace
