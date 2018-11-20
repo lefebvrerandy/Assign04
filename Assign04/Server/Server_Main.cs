@@ -36,25 +36,7 @@ namespace Server
             fileManager.CreateFile(filepath);
             Logger.LogApplicationEvents(filepath, "SERVER START");
 
-
-            //Default the value of the message counter before a message is added
-            DataRepository.MessageCounter = 0;
-
-
-            //Thead the server, and go into a wait loop
-            //Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
-            //ServerPipeLoop.Name = "ServerPipeLoopThread";
-            //ServerPipeLoop.Start();
-
             ServerAcceptLoopThread();
-
-            //Wait with the main thread until all child threads have returned
-            while (true)
-            {
-                Thread.Sleep(1000);
-            }
-
-
         }
 
 
@@ -137,6 +119,11 @@ namespace Server
                 //Open an stream to the pipe taking incoming messages, and write the message to the string         
                 StreamReader readFromPipe = new StreamReader(Client_IN);
                 string incomingMessage = readFromPipe.ReadLine();
+
+
+                Console.WriteLine(incomingMessage);
+
+
                 messageCounter++;
                 messageList.Add(messageCounter, incomingMessage);
             }
@@ -181,7 +168,7 @@ namespace Server
                     string outgoingClientMessage = string.Empty;
                     messageList.TryGetValue(currentMessageCount, out outgoingClientMessage);
                     outputStream.WriteLine(outgoingClientMessage);
-
+                    outputStream.Flush();
 
                     //Increment the message counter and cycle back to check again for a new message
                     currentMessageCount++;

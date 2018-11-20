@@ -107,11 +107,12 @@ namespace Client
                 //Read the incoming data from the stream, format the message, and add it to the output window
                 string formattedMessage = inputStream.ReadLine();
                 formattedMessage = messageFormatter.BuildDisplayString(formattedMessage);
-                OutputTextBox.Text = OutputTextBox.Text + Environment.NewLine + formattedMessage;
-                Thread.Sleep(100);
+                User.incomingMessage = formattedMessage;
+
+                //OutputTextBox.Text = formattedMessage;
+                
             }
         }
-
 
 
         /*  
@@ -140,6 +141,7 @@ namespace Client
                 //Check the user has a message ready to send
                 if (User.Message != null)
                 {
+
                     //ASCII encode the string, and build the output message as: clientID, clientCommand, clientString/textbox input
                     string outboundMessage = messageFormatter.ASCIIEncodeMessage(User.Message);
                     outboundMessage = messageFormatter.BuildOutboundString(User.ClientID, User.Command, User.Message);
@@ -151,7 +153,6 @@ namespace Client
                     User.Command = null;
                     User.Message = null;
                 }
-                Thread.Sleep(100);
             }
         }
 
