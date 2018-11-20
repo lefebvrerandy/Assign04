@@ -181,12 +181,10 @@ namespace Server
                     }
                     catch (Exception e)
                     {
+                        string exceptString = e.ToString();
+                        Logger.LogApplicationEvents("", exceptString);
                         clientDisconnectCommand = true;
                     }
-
-
-
-
                 }
             Thread.Sleep(100);
            } 
