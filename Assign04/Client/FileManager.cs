@@ -148,10 +148,10 @@ namespace Client
 
 
         /*  
-        *  METHOD        : 
-        *  DESCRIPTION   : 
-        *  PARAMETERS    : 
-        *  RETURNS       : 
+        *  METHOD        : ReadXMLDocument
+        *  DESCRIPTION   : This method is used to find a constant string in the XML file, that corrosponds with the search string
+        *  PARAMETERS    : string elementToLocate: The string used to identify the target resource in the XML file
+        *  RETURNS       : string :Returns a string retrieved from the XML file
         */
         public string ReadXMLDocument(string elementToLocate)
         {

@@ -36,12 +36,6 @@ namespace Server
             fileManager.CreateFile(filepath);
             Logger.LogApplicationEvents(filepath, "SERVER START");
 
-
-            //Thead the server, and go into a wait loop
-            //Thread ServerPipeLoop = new Thread(ServerAcceptLoopThread);
-            //ServerPipeLoop.Name = "ServerPipeLoopThread";
-            //ServerPipeLoop.Start();
-
             ServerAcceptLoopThread();
 
             //Wait with the main thread until all child threads have returned
