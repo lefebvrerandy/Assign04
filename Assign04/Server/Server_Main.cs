@@ -62,6 +62,7 @@ namespace Server
             //DEBUG
             int messageCounter = 0;
             Dictionary<int, string> messageList = new Dictionary<int, string>();
+            var PairPipes = new Dictionary<NamedPipeServerStream, NamedPipeServerStream>();
 
 
             FileIO fileManager = new FileIO();
@@ -84,7 +85,7 @@ namespace Server
 
 
                 // Start a new thread, Send the pipe_in pipe to the new thread
-                Thread RecieveFromClients = new Thread(() => RecieveFromAllClients(pipe_in, ref messageList, ref messageCounter));
+                Thread RecieveFromClients = new Thread(() => RecieveFromAllClients(pipe_in, ref messageList, ref messageCounter, ref PairPipes));
                 RecieveFromClients.Name = "RecieveMessageThread";
                 RecieveFromClients.Start();
 
@@ -94,6 +95,10 @@ namespace Server
                 SendToClients.Name = "SendMessageThread";
                 SendToClients.Start();
 
+
+                //Lets store both pipes together in a list as a pair. That way when one closes, we can close the other also.
+                PairPipes.Add(pipe_in, pipe_out);
+                
 
                 //Increment the client counter so the server knows when to return
                 openPipes.ClientCounter++;
@@ -112,7 +117,7 @@ namespace Server
         *  cast to a pipe, and used to recieve incoming messages
         *  RETURNS       : void : The methods has no return
         */
-        private static void RecieveFromAllClients(object data, ref Dictionary<int, string> messageList, ref int messageCounter)
+        private static void RecieveFromAllClients(object data, ref Dictionary<int, string> messageList, ref int messageCounter, ref Dictionary<NamedPipeServerStream, NamedPipeServerStream> PairPipes)
         {
 
             //Cast the object as a pipe
@@ -127,10 +132,37 @@ namespace Server
                 //Open an stream to the pipe taking incoming messages, and write the message to the string         
                 StreamReader readFromPipe = new StreamReader(Client_IN);
                 string incomingMessage = readFromPipe.ReadLine();
-                messageCounter++;
-                messageList.Add(messageCounter, incomingMessage);
+
+                // If a null comes in, that means the client disconnected.
+                if (incomingMessage == null)
+                    clientDisconnectCommand = true;
+                if (clientDisconnectCommand == false)
+                {
+                    messageCounter++;
+                    messageList.Add(messageCounter, incomingMessage);
+                }
+
                 Thread.Sleep(100);
             }
+
+// ///////////////////////////////////
+            // DEBUG
+            foreach (KeyValuePair<NamedPipeServerStream, NamedPipeServerStream> kv in PairPipes)
+                Console.WriteLine(kv);
+// ///////////////////////////////////
+
+            // We should close the matching pipe for that client
+            if (PairPipes.TryGetValue(Client_IN, out NamedPipeServerStream Client_OUT))
+            {
+                Client_OUT.Close();
+            }
+            Client_IN.Close();
+
+// ///////////////////////////////////
+            // DEBUG
+            foreach (KeyValuePair<NamedPipeServerStream, NamedPipeServerStream> kv in PairPipes)
+                Console.WriteLine(kv);
+// ///////////////////////////////////
 
         }//RecieveFromAllClients
 
