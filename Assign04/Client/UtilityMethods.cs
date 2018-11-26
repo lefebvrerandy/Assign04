@@ -73,7 +73,14 @@ namespace Client
 
             //
             string timeStamp = DateTime.Now.ToString("dd: hh: mm > ");
-            completeOutboundMessage += timeStamp + messageFromServer;
+            string[] splitString = messageFromServer.Split(',');
+            string userName = splitString[0];
+            string userMessage = splitString[2];
+            if (userName == User.ClientID)
+                completeOutboundMessage += timeStamp + userName + " > " + userMessage;
+            else
+                completeOutboundMessage += timeStamp + userName + " < " + userMessage;
+
             return completeOutboundMessage;
 
         }//BuildClientOutboundString

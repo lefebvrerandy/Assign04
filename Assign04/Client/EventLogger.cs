@@ -43,7 +43,15 @@ namespace Client
 
             string eventString = null;
             eventString += timeStamp + messageToLog;
-            File.AppendAllText(filepath, eventString + Environment.NewLine);
+            try
+            {
+                File.AppendAllText(filepath, eventString + Environment.NewLine);
+            }
+            catch(Exception e)
+            {
+                UIController.PrintErrorToMessageBox("File path not valid",e.ToString());
+            }
+
 
         }// LogApplicationEvents
 

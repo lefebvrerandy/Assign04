@@ -14,7 +14,7 @@
 using System;
 using System.IO;
 using System.Diagnostics;
-namespace Server
+namespace Server_Service
 {
 
     /* 
@@ -31,23 +31,23 @@ namespace Server
         *  METHOD        : LogApplicationEvents
         *  DESCRIPTION   : The method is used to record a string originating from an event,
         *                  to a file located at the filepath parameter.
-        * NEW UPDATE: 2018-11-25 : Recently converted the logged to log to eventlogger instead
+        * NEW UPDATE: 2018-11-25 : Recently converted the logger to log to eventlogger instead
         *                  Of logging to file.
         *  PARAMETERS    : The parameters are as follows,
         *  string filepath      : The filepath where the events are recorded
         *  string messageToLog  : The specific message to record in the file
         *  RETURNS       : void : The method has no return value
         */
-        public static void LogApplicationEvents(string filepath, string messageToLog)
+        public static void LogApplicationEvents(string messageToLog)
         {
 
             var currentTime = DateTime.Now;
             string timeStamp = currentTime.ToString("yyyy: MM: dd: hh: mm: ss -> ");
+            
 
 
             string eventString = null;
             eventString += timeStamp + messageToLog;
-            //File.AppendAllText(filepath, eventString + Environment.NewLine);
             string LoggedString = eventString + Environment.NewLine;
 
             EventLog serviceEventLog = new EventLog();

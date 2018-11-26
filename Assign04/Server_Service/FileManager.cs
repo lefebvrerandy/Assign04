@@ -18,7 +18,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-namespace Client
+namespace Server_Service
 {
 
     /* 
@@ -30,14 +30,13 @@ namespace Client
     class FileIO
     {
 
-
-       /*  
-       *  METHOD        : CreateFile
-       *  DESCRIPTION   : This method is used to create text file with the name supplied by the parameters; if one already exists, 
-       *                  then the method does nothing and returns
-       *  PARAMETERS    : string filePath : The file path of the file to be created
-       *  RETURNS       : void : The method has no return
-       */
+        /*  
+        *  METHOD        : CreateFile
+        *  DESCRIPTION   : This method is used to create text file with the name supplied by the parameters; if one already exists, 
+        *                  then the method does nothing and returns
+        *  PARAMETERS    : string filePath : The file path of the file to be created
+        *  RETURNS       : void : The method has no return
+        */
         public void CreateFile(string filePath)
         {
             try
@@ -57,18 +56,19 @@ namespace Client
             //In regards to the warning above, catch any exceptions thrown due to the masterFilePath variable being empty, or incorrect
             catch (ArgumentNullException nullException)
             {
-                UIController.PrintErrorToMessageBox("CreateFile NullException: ", nullException.ToString());
+                Logger.LogApplicationEvents(nullException.ToString());
             }
+            
 
             catch (DirectoryNotFoundException missingDirectory)
             {
-                UIController.PrintErrorToMessageBox("CreateFile MissingDirectory: ", missingDirectory.ToString());
+                Logger.LogApplicationEvents(missingDirectory.ToString());
             }
 
             //Generic catch block for all remaining exceptions
             catch (Exception errorMessage)
             {
-                UIController.PrintErrorToMessageBox("CreateFile GenericError: ", errorMessage.ToString());
+                Logger.LogApplicationEvents(errorMessage.ToString());
             }
         }// CreateFile
 
@@ -100,7 +100,7 @@ namespace Client
             //Generic catch block for all remaining exceptions
             catch (Exception errorMessage)
             {
-                UIController.PrintErrorToMessageBox("AppendToFile Error: ", errorMessage.ToString());
+                Logger.LogApplicationEvents(errorMessage.ToString());
             }
         }// AppendToFile
 
@@ -140,7 +140,7 @@ namespace Client
             //Generic catch block for all exceptions
             catch (Exception errorMessage)
             {
-                UIController.PrintErrorToMessageBox("WriteToFile Error: ", errorMessage.ToString());
+                Logger.LogApplicationEvents(errorMessage.ToString());
             }
         }//WriteToFile
 
@@ -161,31 +161,42 @@ namespace Client
                 string pathDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
                 //Load the xml file
                 XDocument constantsDocument = XDocument.Load(pathDirectory + "./constants.xml");
+                //XDocument constantsDocument = XDocument.Load("./constants.xml");
 
 
                 //Look for the pipe name element
                 if (elementToLocate == "pipeName-incoming")
                 {
-                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/incomingPipe").Value;
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/incomingPipe").Value;     //Returns serverIn
                 }
 
 
+                
                 else if (elementToLocate == "pipeName-outgoing")
                 {
-                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/outgoingPipe").Value;
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/outgoingPipe").Value;     //Returns serverOut
                 }
 
 
+                //Look for the pipe used to signal the client's status
                 else if (elementToLocate == "pipeName-clientStatus")
                 {
                     stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/statusPipe").Value;
                 }
+
 
                 //Look for the log file path
                 else if (elementToLocate == "logFilePath")
                 {
 
                     stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/filePaths/logFile").Value;
+                }
+
+
+                //Look for the filepath of the ASCII art used for the servers title/UI
+                else if(elementToLocate == "serverUI")
+                {
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/filePaths/serverUI").Value;
                 }
 
 
@@ -200,7 +211,7 @@ namespace Client
             //XML file could not be located, or the element name was incorrect
             catch (Exception errorMessage)
             {
-                UIController.PrintErrorToMessageBox("ReadXMLDocument Error: ", errorMessage.ToString());
+                Logger.LogApplicationEvents(errorMessage.ToString());
             }
 
             return stringFromDocument;

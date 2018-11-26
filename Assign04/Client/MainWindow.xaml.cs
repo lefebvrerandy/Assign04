@@ -104,7 +104,7 @@ namespace Client
 
 
             //Check to ensure the client hasn't signaled that they wish to shutdown the application
-            while (User.ClientID != null)
+            while ((User.ClientID != null) && (incomingMessagePipe.IsConnected))
             {
 
                 //Read the incoming data from the stream, format the message, and add it to the output window
@@ -149,7 +149,7 @@ namespace Client
 
 
             //Check to ensure the client hasn't signaled that they wish to shutdown the application
-            while (User.ClientID != null)
+            while ((User.ClientID != null) && (outgoingMessagePipe.IsConnected))
             {
 
                 //Check the user has a message ready to send
@@ -159,7 +159,17 @@ namespace Client
                     string outboundMessage = messageFormatter.ASCIIEncodeMessage(User.Message);
                     outboundMessage = messageFormatter.BuildOutboundString(User.ClientID, User.Command, User.Message);
                     outputStream.WriteLine(outboundMessage);
-                    outputStream.Flush();
+                    try
+                    {
+                        outputStream.Flush();
+                    }
+                    catch(Exception errorMessage)
+                    {
+                        //Log the error before returning up the calling stack
+                        string filepath = fileManager.ReadXMLDocument("logFilePath");
+                        Logger.LogApplicationEvents(filepath, errorMessage.ToString());
+                    }
+
 
 
                     //Reset the client's message components before the next cycle

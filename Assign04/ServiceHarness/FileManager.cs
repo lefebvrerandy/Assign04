@@ -18,7 +18,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
-namespace Client
+namespace ServiceHarness
 {
 
     /* 
@@ -30,14 +30,45 @@ namespace Client
     class FileIO
     {
 
+        /*  
+        *  METHOD        : PrintConsoleUI
+        *  DESCRIPTION   : This method is used to open the text file containing the servers UI, and print 
+        *                  the design to the console
+        *  PARAMETERS    : void : The method takes no arguments
+        *  RETURNS       : void : The method has no return
+        */
+        public void PrintConsoleUI()
+        {
+            Console.Clear();
 
-       /*  
-       *  METHOD        : CreateFile
-       *  DESCRIPTION   : This method is used to create text file with the name supplied by the parameters; if one already exists, 
-       *                  then the method does nothing and returns
-       *  PARAMETERS    : string filePath : The file path of the file to be created
-       *  RETURNS       : void : The method has no return
-       */
+            try
+            {
+                //Load the text file containing the UI pattern, and print its contents to the console window
+                string filepath = ReadXMLDocument("serverUI");
+                var lines = File.ReadAllLines(filepath);
+                foreach (var line in lines)
+                {
+                    Console.WriteLine(line);
+                }
+            }
+
+
+            //If the file can't be found, or permission is denied, log the error
+            catch (FileNotFoundException fileError)
+            {
+                string filepath = ReadXMLDocument("logFilePath");   //Grab the filepath from the XML document
+                Logger.LogApplicationEvents(fileError.ToString());
+            }
+
+        }//PrintConsoleUI
+
+        /*  
+        *  METHOD        : CreateFile
+        *  DESCRIPTION   : This method is used to create text file with the name supplied by the parameters; if one already exists, 
+        *                  then the method does nothing and returns
+        *  PARAMETERS    : string filePath : The file path of the file to be created
+        *  RETURNS       : void : The method has no return
+        */
         public void CreateFile(string filePath)
         {
             try
@@ -57,18 +88,18 @@ namespace Client
             //In regards to the warning above, catch any exceptions thrown due to the masterFilePath variable being empty, or incorrect
             catch (ArgumentNullException nullException)
             {
-                UIController.PrintErrorToMessageBox("CreateFile NullException: ", nullException.ToString());
+                Console.WriteLine(nullException.ToString());
             }
 
             catch (DirectoryNotFoundException missingDirectory)
             {
-                UIController.PrintErrorToMessageBox("CreateFile MissingDirectory: ", missingDirectory.ToString());
+                Console.WriteLine(missingDirectory.ToString());
             }
 
             //Generic catch block for all remaining exceptions
             catch (Exception errorMessage)
             {
-                UIController.PrintErrorToMessageBox("CreateFile GenericError: ", errorMessage.ToString());
+                Console.WriteLine(errorMessage.ToString());
             }
         }// CreateFile
 
@@ -100,7 +131,7 @@ namespace Client
             //Generic catch block for all remaining exceptions
             catch (Exception errorMessage)
             {
-                UIController.PrintErrorToMessageBox("AppendToFile Error: ", errorMessage.ToString());
+                Console.WriteLine(errorMessage.ToString());
             }
         }// AppendToFile
 
@@ -140,7 +171,7 @@ namespace Client
             //Generic catch block for all exceptions
             catch (Exception errorMessage)
             {
-                UIController.PrintErrorToMessageBox("WriteToFile Error: ", errorMessage.ToString());
+                Console.WriteLine(errorMessage.ToString());
             }
         }//WriteToFile
 
@@ -158,34 +189,43 @@ namespace Client
             string  stringFromDocument = string.Empty;
             try
             {
-                string pathDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
                 //Load the xml file
-                XDocument constantsDocument = XDocument.Load(pathDirectory + "./constants.xml");
+                XDocument constantsDocument = XDocument.Load("../../constants.xml");
 
 
                 //Look for the pipe name element
                 if (elementToLocate == "pipeName-incoming")
                 {
-                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/incomingPipe").Value;
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/incomingPipe").Value;     //Returns serverIn
                 }
 
 
+                
                 else if (elementToLocate == "pipeName-outgoing")
                 {
-                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/outgoingPipe").Value;
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/outgoingPipe").Value;     //Returns serverOut
                 }
 
 
+                //Look for the pipe used to signal the client's status
                 else if (elementToLocate == "pipeName-clientStatus")
                 {
                     stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/networking/statusPipe").Value;
                 }
+
 
                 //Look for the log file path
                 else if (elementToLocate == "logFilePath")
                 {
 
                     stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/filePaths/logFile").Value;
+                }
+
+
+                //Look for the filepath of the ASCII art used for the servers title/UI
+                else if(elementToLocate == "serverUI")
+                {
+                    stringFromDocument = constantsDocument.XPathSelectElement("/root/constants/filePaths/serverUI").Value;
                 }
 
 
@@ -200,7 +240,7 @@ namespace Client
             //XML file could not be located, or the element name was incorrect
             catch (Exception errorMessage)
             {
-                UIController.PrintErrorToMessageBox("ReadXMLDocument Error: ", errorMessage.ToString());
+                Console.WriteLine(errorMessage.ToString());
             }
 
             return stringFromDocument;
