@@ -63,7 +63,7 @@ namespace Client
         /*  
         *  METHOD        : BuildDisplayString
         *  DESCRIPTION   : Used to prepend a time stamp to the incoming string
-        *  PARAMETERS    : string messageFromServer : String that will ahve the DateTime prepended to it
+        *  PARAMETERS    : string messageFromServer : String that will have the DateTime prepended to it
         *  RETURNS       : string : Returns the completed string with the time stamp appended
         *   to the begining of the argument string
         */
@@ -77,9 +77,21 @@ namespace Client
             string userName = splitString[0];
             string userMessage = splitString[2];
             if (userName == User.ClientID)
+            {
+                //string lengthOfMessage = timeStamp + userName + " > " + userMessage;
+                //int length = lengthOfMessage.Length;
+                //int howManySpace = 200 - length;
+                //for (int i = 0; i < howManySpace; i++)
+                //{
+                //    completeOutboundMessage += " ";
+                //}
                 completeOutboundMessage += timeStamp + userName + " > " + userMessage;
+            }
             else
+            {
                 completeOutboundMessage += timeStamp + userName + " < " + userMessage;
+            }
+
 
             return completeOutboundMessage;
 
@@ -91,7 +103,7 @@ namespace Client
         *  DESCRIPTION   : This method is used to check the length of the clients userName. If its
         *   above 0 and below 17 chars in length, then its valid
         *  PARAMETERS    : string stringToCheck : 
-        *  RETURNS       : bool : Returns true if the username is less than 17 chars and above 0
+        *  RETURNS       : bool : Returns true if the user name is less than 17 chars and above 0
         */
         public bool CheckUserNameLength(string stringToCheck)
         {
@@ -111,7 +123,7 @@ namespace Client
         /*  
         *  METHOD        : CheckCharactersInString
         *  DESCRIPTION   : Used to check the characters in the parameter string. if chars outside the range of 
-        *   32 - 126 are detected, then the entire string is considerd invalid
+        *   32 - 126 are detected, then the entire string is considered invalid
         *  PARAMETERS    : string stringToCheck: The string that will be checked
         *  RETURNS       : bool : Returns true if the string contains only valid characters
         */

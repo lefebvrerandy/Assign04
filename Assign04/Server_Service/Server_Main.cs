@@ -1,6 +1,6 @@
 ﻿/* 
 *  FILE          : Server.cs
-*  PROJECT       : PROG 2120 - Assignment 4
+*  PROJECT       : PROG 2120 - Assignment 5
 *  PROGRAMMER    : Randy Lefebvre & Bence Karner
 *  DESCRIPTION   : This file contains the starting point of the Server applications. The program 
 *                  creates a file, and logs the start of the application before executing its networking
@@ -40,30 +40,31 @@ namespace Server_Service
 
         public static void RunServer()
         {
-            ManualResetEvent signal = new ManualResetEvent(false);
-            Logger.LogApplicationEvents("Server Starting");
-            int messageCounter = 0;
-            Dictionary<int, string> messageList = new Dictionary<int, string>();
-            var PairPipesIn = new Dictionary<NamedPipeServerStream, NamedPipeServerStream>();
-            var PairPipesOut = new Dictionary<NamedPipeServerStream, NamedPipeServerStream>();
+            int messageCounter = 0;             // Keep track of how many messages there is
+            Dictionary<int, string> messageList = new Dictionary<int, string>();    // A repository of messages
+            var PairPipesIn = new Dictionary<NamedPipeServerStream, NamedPipeServerStream>();   // Key value for the two pipes. Key being In, Value being Out pipes
+            var PairPipesOut = new Dictionary<NamedPipeServerStream, NamedPipeServerStream>();  // Key value for the two pipes. Key being Out, Value being Out In
 
 
 
             FileIO fileManager = new FileIO();
             string incomingPipeName = fileManager.ReadXMLDocument("pipeName-incoming");      //string indicator of the element to search in the XML doc
             string outgoingPipename = fileManager.ReadXMLDocument("pipeName-outgoing");      //string indicator of the element to search in the XML doc
-            ServerPipes openPipes = new ServerPipes();
-            bool PipeInIsConnected = false;
-            bool PipeOutIsConnected = false;
-            Thread RecieveFromClients = null;
-            Thread SendToClients = null;
+            ServerPipes openPipes = new ServerPipes();      // Create a new instance of ServerPipes
+            bool PipeInIsConnected = false;                 // Flag for pipeIn being connected
+            bool PipeOutIsConnected = false;                // Flag for pipeOut being connected
+            Thread RecieveFromClients = null;               // Empty thread - Used to receive messages from clients
+            Thread SendToClients = null;                    // Empty thread - Used to sends messages from clients
 
             Logger.LogApplicationEvents("Server Started");
             do
             {
-                openPipes.OpenInPipe("serverIn");
+                // Open the pipes for the next client. Goes into an async loop
+                // until a client is connected, then loops again
+                openPipes.OpenInPipe("serverIn");      
                 openPipes.OpenOutPipe("serverOut");
 
+                // If a new client connects start a new thread that looks for new messages sent from that client
                 if (newServerInPipe != null)
                 {
                     pipe_in = newServerInPipe;
@@ -75,7 +76,7 @@ namespace Server_Service
                 }
 
 
-                //Start a new thread, Send the pipe_out pipe to the new thread
+                // If a new client connects start a new thread that looks to send the new messages to the client
                 if (newServerOutPipe != null)
                 {
                     pipe_out = newServerOutPipe;
@@ -86,7 +87,9 @@ namespace Server_Service
                     PipeOutIsConnected = true;
                 }
 
-                //Lets store both pipes together in a list as a pair.That way when one closes, we can close the other also.
+
+                //Lets store both pipes together in a list as a pair. We use this to keep track of adjacent pipes.
+                // That way when one closes, we can close the other also.
                 if ((PipeInIsConnected) && (PipeOutIsConnected))
                 {
                     PairPipesIn.Add(pipe_in, pipe_out);     // Key = pipe in, value = pipe out
@@ -104,6 +107,7 @@ namespace Server_Service
 
                 Thread.Sleep(1);
 
+                // If the service is stopped. Join all threads
                 if (Run == false)
                 {
                     Thread.Sleep(500);
@@ -113,22 +117,6 @@ namespace Server_Service
                         SendToClients.Join();
                 }
             } while(Run);
-
-            Debug.Write("We are out");
-
-        }
-
-
-
-        /*  
-        *  METHOD        : ServerShutDown
-        *  DESCRIPTION   : This method is used to gracefully shut down the server
-        *  PARAMETERS    : void : The method takes no arguments
-        *  RETURNS       : void : The methods has no return
-        */
-        public void StopServer()
-        {
-            Run = false;
         }
 
 
@@ -136,16 +124,27 @@ namespace Server_Service
         *  METHOD        : RecieveFromAllClients
         *  DESCRIPTION   : This method is used to receive messages from the clients,
         *   and save them to the data repository where they can be accessed by the sending thread
-        *  PARAMETERS    : object data : Generic object type argument which us
-        *  cast to a pipe, and used to receive incoming messages
+        *  PARAMETERS    : 
+        *       object data : 
+        *                       Generic object type argument which us
+        *                       cast to a pipe, and used to receive incoming messages
+        *       ref Dictionary<int, string> messageList: 
+        *                       Message repository
+        *       ref int messageCounter :
+        *                       How many messages are currently sent from the client
+        *       ref Dictionary<NamedPipeServerStream, NamedPipeServerStream> PairPipesIn:
+        *                       Used to keep track of which two pipes are from the client
+        *       ref bool Pause:
+        *                       If the server should or shouldnt be paused
         *  RETURNS       : void : The methods has no return
         */
         private static void RecieveFromAllClients(object data, ref Dictionary<int, string> messageList, ref int messageCounter, ref Dictionary<NamedPipeServerStream, NamedPipeServerStream> PairPipesIn, ref bool Pause)
         {
             Thread.Sleep(100);
-            //Cast the object as a pipe
+
+            // Store the NamedPipeServerStream "data" into "Client_IN"
             NamedPipeServerStream Client_IN = null;
-            Client_IN = (NamedPipeServerStream)data;
+            Client_IN = (NamedPipeServerStream)data;    
 
 
             //Keep cycling an receiving new messages until the clients indicate they are shutting down
@@ -185,34 +184,46 @@ namespace Server_Service
         /*  
         *  METHOD        : SendToAllClients
         *  DESCRIPTION   : This method is used to DEBUG
-        *  PARAMETERS    : void : The method takes no arguments
+        *  PARAMETERS    : 
+        *       object data : 
+        *                       Generic object type argument which us
+        *                       cast to a pipe, and used to receive incoming messages
+        *       ref Dictionary<int, string> messageList: 
+        *                       Message repository
+        *       ref int messageCounter :
+        *                       How many messages are currently sent from the client
+        *       ref Dictionary<NamedPipeServerStream, NamedPipeServerStream> PairPipesIn:
+        *                       Used to keep track of which two pipes are from the client
+        *       ref bool Pause:
+        *                       If the server should or shouldnt be paused (Pause windows service)
+        *       ref bool toDisconnect:
+        *                       If the server should be disconnected (Stop windows service)
         *  RETURNS       : void : The methods has no return
         */
         private static void SendToAllClients(object data, ref Dictionary<int, string> messageList, ref int messageCounter, ref Dictionary<NamedPipeServerStream, NamedPipeServerStream> PairPipesOut, ref bool toDisconnect, ref bool Pause)
         {
             Thread.Sleep(100);
-            //Cast the object as a 
+
+            // Store the NamedPipeServerStream "data" into "Client_OUT"
             NamedPipeServerStream Client_OUT = null;
             Client_OUT = (NamedPipeServerStream)data;
 
-
-
+            
             //Open a new stream to the outgoing pipe
             StreamWriter outputStream = new StreamWriter(Client_OUT);
 
-
-
+            
             //Save the current message count in the dictionary
             int currentMessageCount = messageCounter;
 
-
-
+            
             //Keep cycling looking for new messages in the dictionary
             //For every message thats added the messageRepository, the thread managing incoming messages will increment the counter
 
            bool clientDisconnectCommand = false;
            while (clientDisconnectCommand == false)
            {
+                // If the Server is paused, Lets go into a wait loop
                 if (Pause == true)
                 {
                     Thread.Sleep(100);

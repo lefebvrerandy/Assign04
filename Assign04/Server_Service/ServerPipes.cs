@@ -1,8 +1,8 @@
 ﻿/* 
 *  FILE          : ServerPipes.cs
-*  PROJECT       : PROG 2120 - Assignment 4
+*  PROJECT       : PROG 2120 - Assignment 5
 *  PROGRAMMER    : Bence Karner & Randy Lefebvre
-*  DESCRIPTION   : This file contains the the networking methods required to open named pipes for 
+*  DESCRIPTION   : This file contains the networking methods required to open named pipes for 
 *                  the chat system to function. 
 */
 
@@ -30,11 +30,11 @@ namespace Server_Service
     */
     public class ServerPipes
     {
-        bool pipeWaitingIn = false;
-        bool pipeWaitingOut = false;
+        bool pipeWaitingIn = false;     // Flag to keep multiple unused pipes from opening. Only open a new when the last was connected
+        bool pipeWaitingOut = false;    // Flag to keep multiple unused pipes from opening. Only open a new when the last was connected
         public int ClientCounter { get; set; }  //Counts the number of clients currently connected to the server
-        private NamedPipeServerStream ServerOutPipe = null;
-        private NamedPipeServerStream ServerInPipe = null;
+        private NamedPipeServerStream ServerOutPipe = null;  // Keep track of the new pipe
+        private NamedPipeServerStream ServerInPipe = null;   // Keep track of the new pipe
 
 
         //  METHOD        : OpenOutPipe()
@@ -78,10 +78,11 @@ namespace Server_Service
         {
             try
             {
-                //ServerInPipe = new NamedPipeServerStream(pipeName, PipeDirection.In, 100);
-                //ServerInPipe.WaitForConnection();
+                // If a new pipe hasnt been opened, start a new pipe
+                // If a new pipe has been opened but the client hasnt connected, dont open a new one
                 if (!pipeWaitingIn)
                 {
+                    // Open an Async pipe
                     ServerInPipe = new NamedPipeServerStream(pipeName, PipeDirection.In, 100, PipeTransmissionMode.Message, PipeOptions.Asynchronous);
                     var asyncResult = ServerInPipe.BeginWaitForConnection(OnConnectedIn, ServerInPipe);
                     pipeWaitingIn = true;
@@ -97,14 +98,27 @@ namespace Server_Service
             }
         }
 
+
+        //  METHOD        : OnConnectedIn()
+        //  DESCRIPTION   : This is a Async callback method. It will get triggered once the pipe has been connected to a client.
+        //                  We will store the new pipe into the Servers variable "newServerInPipe" so that way main knows about it.
+        //  PARAMETERS    : IAsyncResult result : The new pipes address
+        //  RETURNS       : Void
+        //
         private void OnConnectedIn(IAsyncResult result)
         {
             ServerInPipe.EndWaitForConnection(result);
-            var server = result.AsyncState as NamedPipeServerStream;
-            Server.newServerInPipe = server;
+            Server.newServerInPipe = result.AsyncState as NamedPipeServerStream;
             pipeWaitingIn = false;
         }
 
+
+        //  METHOD        : OnConnectedIn()
+        //  DESCRIPTION   : This is a Async callback method. It will get triggered once the pipe has been connected to a client.
+        //                  We will store the new pipe into the Servers variable "newServerOutPipe" so that way main knows about it.
+        //  PARAMETERS    : IAsyncResult result : The new pipes address
+        //  RETURNS       : Void
+        //
         private void OnConnectedOut(IAsyncResult result)
         {
             ServerOutPipe.EndWaitForConnection(result);

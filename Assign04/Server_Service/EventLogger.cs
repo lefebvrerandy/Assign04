@@ -1,13 +1,10 @@
 ﻿/* 
 *  FILE          : EventLogger.cs
-*  PROJECT       : PROG 2120 - Assignment 4
+*  PROJECT       : PROG 2120 - Assignment 5
 *  PROGRAMMER    : Bence Karner & Randy Lefebvre
 *  DESCRIPTION   : This file contains the Logger class, and is used for recording data related to 
 *                  errors, or application events to a log file. 
-*                  
-*  NOTE: As the author (Bence Karner) of the class, and methods, I have chosen to share the source code with my team
-*        for the INFO-2180 project managment project. Just as well, this exact class and method was used
-*        in a prior PROG-2110 assignment.
+*   NEW UPDATE: 2018-11-25 : Recently converted the logged to log to eventlogger instead Of logging to file.
 */
 
 
@@ -22,7 +19,7 @@ namespace Server_Service
     *   PURPOSE : The method was designed to operate independent of the application its embedded in. 
     *             The class provides a method for recording errors or events to a specific log file
     *              and only requires a filepath, and error string to execute its full functionality. 
-    *   NEW UPDATE: 2018-11-25 : Recently converted the logged to log to eventlogger instead Of logging to file.
+
     */
     class Logger
     {

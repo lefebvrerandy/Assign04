@@ -1,4 +1,11 @@
-﻿using System;
+﻿/* 
+*  FILE          : ServerPipes.cs
+*  PROJECT       : PROG 2120 - Assignment 5
+*  PROGRAMMER    : Bence Karner & Randy Lefebvre
+*  DESCRIPTION   : This file contains the Service. Starts a new service and runs it. 
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceProcess;

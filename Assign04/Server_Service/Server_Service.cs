@@ -1,4 +1,11 @@
-﻿using System;
+﻿/* 
+*  FILE          : Server_Service.cs
+*  PROJECT       : PROG 2120 - Assignment 5
+*  PROGRAMMER    : Bence Karner & Randy Lefebvre
+*  DESCRIPTION   : This file contains the Service class. It will create the server, and handle the OnStart, OnStop, OnPause, OnContinue
+*/
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,12 +21,10 @@ namespace Server_Service
     public partial class Server_Service : ServiceBase
     {
         Thread tServer = null;
-        Server instanceServer = null;
         public Server_Service()
         {
             InitializeComponent();
             CanPauseAndContinue = true;
-            instanceServer = new Server();
             ThreadStart ts = new ThreadStart(Server.RunServer);
             tServer = new Thread(ts);
 

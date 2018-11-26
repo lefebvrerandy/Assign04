@@ -1,6 +1,6 @@
 ﻿/* 
 *  FILE          : FileManager.cs
-*  PROJECT       : PROG 2120 - Assignment 4
+*  PROJECT       : PROG 2120 - Assignment 5
 *  PROGRAMMER    : Bence Karner & Randy Lefebvre
 *  DESCRIPTION   : This file contains the FileIO class, and is used for opening, writing, creating
 *                   and appending to external files. 
